@@ -153,7 +153,10 @@ func CalculateBlockTotals(block *types.Block) {
 		txNonceSum += b.Nonce()
 	}
 
-	geth.GasPriceMean.Div(gasPriceSum, new(big.Int).SetUint64(uint64(block.Transactions().Len())))
+	if block.Transactions().Len() > 0 {
+		geth.GasPriceMean.Div(gasPriceSum, new(big.Int).SetUint64(uint64(block.Transactions().Len())))
+		geth.TransactionNonceMean = txNonceSum / uint64(block.Transactions().Len())
+	}
 
 	if len(gasPrices) >= 2 {
 		geth.GasPriceMedian = gasPrices[len(gasPrices)/2]
@@ -161,7 +164,6 @@ func CalculateBlockTotals(block *types.Block) {
 		geth.GasPriceMedian = gasPrices[0]
 	}
 
-	geth.TransactionNonceMean = txNonceSum / uint64(block.Transactions().Len())
 	if len(txNonces) >= 2 {
 		geth.TransactionNonceMedian = txNonces[len(txNonces)/2]
 	} else if len(txNonces) == 1 {
