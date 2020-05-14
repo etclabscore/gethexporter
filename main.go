@@ -103,7 +103,7 @@ func main() {
 	log.Printf("Geth Exporter running on http://localhost:9090/metrics\n")
 
 	http.HandleFunc("/metrics", MetricsHttp)
-	err = http.ListenAndServe(":9090", nil)
+	err = http.ListenAndServe(":6061", nil)
 	if err != nil {
 		panic(err)
 	}
