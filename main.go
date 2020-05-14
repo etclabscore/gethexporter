@@ -84,10 +84,14 @@ func main() {
 	if delay == 0 {
 		delay = 500
 	}
+	if geth.GethServer == "" {
+		panic("empty geth server address")
+	}
 	log.Printf("Connecting to Ethereum node: %v\n", geth.GethServer)
-	eth, err = ethclient.Dial(geth.GethServer)
-	if err != nil {
-		panic(err)
+	for ; eth == nil || err != nil ; eth, err = ethclient.Dial(geth.GethServer) {
+		log.Println("ethclient", "eth", eth, "err", err)
+		log.Println("re-attempting in 5s...")
+		time.Sleep(5*time.Second)
 	}
 	geth.CurrentBlock, err = eth.BlockByNumber(context.TODO(), nil)
 	if err != nil {
