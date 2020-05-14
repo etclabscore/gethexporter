@@ -264,58 +264,65 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	}
 	CalculateBlockTotals(block)
 
-	allOut = append(allOut, fmt.Sprintf("geth_block %v", block.NumberU64()))
+	allOut = append(allOut, fmt.Sprintf("geth_block_number %v", block.NumberU64()))
 
-	allOut = append(allOut, fmt.Sprintf("geth_seconds_last_block_subjective %0.2f", time.Now().Sub(geth.LastBlockUpdate).Seconds()))
-	allOut = append(allOut, fmt.Sprintf("geth_seconds_last_block_reported %v", geth.BlockTimeDelta))
+	allOut = append(allOut, fmt.Sprintf("geth_block_delta_subjective_seconds %0.2f", time.Now().Sub(geth.LastBlockUpdate).Seconds()))
+	allOut = append(allOut, fmt.Sprintf("geth_block_delta_seconds %v", geth.BlockTimeDelta))
 
-	allOut = append(allOut, fmt.Sprintf("geth_block_transactions %v", block.Transactions().Len()))
-	allOut = append(allOut, fmt.Sprintf("geth_block_value_transferred %v", ToEther(geth.TotalEthTransferred)))
+	allOut = append(allOut, fmt.Sprintf("geth_block_transactions_count %v", block.Transactions().Len()))
+	allOut = append(allOut, fmt.Sprintf("geth_block_transactions_sum_value_transfer %v", ToEther(geth.TotalEthTransferred)))
 	allOut = append(allOut, fmt.Sprintf("geth_block_nonce %v", block.Nonce()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_difficulty %v", block.Difficulty()))
-	allOut = append(allOut, fmt.Sprintf("geth_block_uncles %v", len(block.Uncles())))
+	allOut = append(allOut, fmt.Sprintf("geth_block_uncles_count %v", len(block.Uncles())))
 	allOut = append(allOut, fmt.Sprintf("geth_block_size_bytes %v", geth.BlockSize))
 
-	allOut = append(allOut, fmt.Sprintf("geth_suggested_gas_price %v", geth.SugGasPrice))
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_used %v", block.GasUsed()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_limit %v", block.GasLimit()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_spent %v", geth.GasSpent))
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_price_mean %v", geth.GasPriceMean))
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_price_median %v", geth.GasPriceMedian))
 
-	allOut = append(allOut, fmt.Sprintf("geth_block_tx_nonce_mean %v", geth.TransactionNonceMean))
-	allOut = append(allOut, fmt.Sprintf("geth_block_tx_nonce_median %v", geth.TransactionNonceMedian))
+	allOut = append(allOut, fmt.Sprintf("geth_block_transaction_nonce_mean %v", geth.TransactionNonceMean))
+	allOut = append(allOut, fmt.Sprintf("geth_block_transaction_nonce_median %v", geth.TransactionNonceMedian))
 
-	allOut = append(allOut, fmt.Sprintf("geth_pending_transactions %v", geth.PendingTx))
+	allOut = append(allOut, fmt.Sprintf("geth_block_contract_create_count %v", geth.ContractsCreated))
+	allOut = append(allOut, fmt.Sprintf("geth_block_token_transfer_count %v", geth.TokenTransfers))
+	allOut = append(allOut, fmt.Sprintf("geth_block_value_transfer_count %v", geth.EthTransfers))
+
+	allOut = append(allOut, fmt.Sprintf("geth_txpool_pending_count %v", geth.PendingTx))
+
 	allOut = append(allOut, fmt.Sprintf("geth_network_id %v", geth.NetworkId))
-	allOut = append(allOut, fmt.Sprintf("geth_chain_id %v", geth.ChainId))
-	allOut = append(allOut, fmt.Sprintf("geth_contracts_created %v", geth.ContractsCreated))
-	allOut = append(allOut, fmt.Sprintf("geth_token_transfers %v", geth.TokenTransfers))
-	allOut = append(allOut, fmt.Sprintf("geth_eth_transfers %v", geth.EthTransfers))
-	allOut = append(allOut, fmt.Sprintf("geth_load_time %0.4f", geth.LoadTime))
+	allOut = append(allOut, fmt.Sprintf("geth_network_chain_id %v", geth.ChainId))
+
+	allOut = append(allOut, fmt.Sprintf("geth_api_suggested_gas_price %v", geth.SugGasPrice))
+
+	allOut = append(allOut, fmt.Sprintf("geth_load_time_seconds %0.4f", geth.LoadTime))
 
 	if geth.Sync != nil {
-		allOut = append(allOut, fmt.Sprintf("geth_known_states %v", int(geth.Sync.KnownStates)))
-		allOut = append(allOut, fmt.Sprintf("geth_highest_block %v", int(geth.Sync.HighestBlock)))
-		allOut = append(allOut, fmt.Sprintf("geth_pulled_states %v", int(geth.Sync.PulledStates)))
+		allOut = append(allOut, fmt.Sprintf("geth_sync_known_states %v", int(geth.Sync.KnownStates)))
+		allOut = append(allOut, fmt.Sprintf("geth_sync_highest_block %v", int(geth.Sync.HighestBlock)))
+		allOut = append(allOut, fmt.Sprintf("geth_sync_pulled_states %v", int(geth.Sync.PulledStates)))
 	}
+
+	allOut = append(allOut, fmt.Sprintf("geth_blocks_total %v", blockCount))
+	allOut = append(allOut, fmt.Sprintf("geth_transactions_total %v", transactionCount))
 
 	for _, v := range addresses {
 		allOut = append(allOut, fmt.Sprintf("geth_address_balance{address=\"%v\"} %v", v.Address, ToEther(v.Balance).String()))
 		allOut = append(allOut, fmt.Sprintf("geth_address_nonce{address=\"%v\"} %v", v.Address, v.Nonce))
 	}
 	for k, v := range etherbaseBlocks {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block{address=\"%s\"} %v", k.Hex(), v))
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_total{address=\"%s\"} %v", k.Hex(), v))
 	}
 	for k, v := range etherbaseBlocksRatio {
 		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_ratio{address=\"%s\"} %0.2f", k.Hex(), v))
 	}
 	for k, v := range etherbaseBlockTimeDeltaMS {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_time_delta{address=\"%s\"} %v", k.Hex(), v))
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_time_delta_seconds{address=\"%s\"} %v", k.Hex(), v))
 	}
 
 	for k, v := range etherbaseTransactions {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transaction{address=\"%s\"} %v", k.Hex(), v))
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transaction_total{address=\"%s\"} %v", k.Hex(), v))
 	}
 	for k, v := range etherbaseTransactionsRatio {
 		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transaction_ratio{address=\"%s\"} %0.2f", k.Hex(), v))
