@@ -23,10 +23,11 @@ var (
 	delay                      int
 	watchingAddresses          string
 	blockCount                 int
-	transactionCount int
+	transactionCount           int
 	addresses                  map[string]Address
 	etherbaseBlocks            map[common.Address]int
 	etherbaseBlocksRatio       map[common.Address]float64
+	etherbaseBlockTimeDeltaMS  map[common.Address]uint64
 	etherbaseTransactions      map[common.Address]int
 	etherbaseTransactionsRatio map[common.Address]float64
 )
@@ -34,27 +35,38 @@ var (
 func init() {
 	geth = new(GethInfo)
 	addresses = make(map[string]Address)
+	geth.TotalEthTransferred = big.NewInt(0)
+
 	etherbaseBlocks = make(map[common.Address]int)
+	etherbaseBlocksRatio = make(map[common.Address]float64)
+	etherbaseBlockTimeDeltaMS = make(map[common.Address]uint64)
+
 	etherbaseTransactions = make(map[common.Address]int)
-	geth.TotalEth = big.NewInt(0)
+	etherbaseTransactionsRatio = make(map[common.Address]float64)
 }
 
 type GethInfo struct {
-	GethServer       string
-	ContractsCreated int64
-	TokenTransfers   int64
-	ContractCalls    int64
-	EthTransfers     int64
-	BlockSize        float64
-	LoadTime         float64
-	TotalEth         *big.Int
-	CurrentBlock     *types.Block
-	Sync             *ethereum.SyncProgress
-	LastBlockUpdate  time.Time
-	SugGasPrice      *big.Int
-	PendingTx        uint
-	NetworkId        *big.Int
-	ChainId          *big.Int
+	GethServer             string
+	ContractsCreated       int64
+	TokenTransfers         int64
+	ContractCalls          int64
+	EthTransfers           int64
+	BlockSize              float64
+	LoadTime               float64
+	TotalEthTransferred    *big.Int
+	CurrentBlock           *types.Block
+	Sync                   *ethereum.SyncProgress
+	LastBlockUpdate        time.Time
+	SugGasPrice            *big.Int
+	PendingTx              uint
+	NetworkId              *big.Int
+	ChainId                *big.Int
+	GasSpent               *big.Int
+	GasPriceMean           *big.Int
+	GasPriceMedian         *big.Int
+	TransactionNonceMean   uint64
+	TransactionNonceMedian uint64
+	BlockTimeDelta         uint64
 }
 
 type Address struct {
@@ -94,10 +106,22 @@ func main() {
 }
 
 func CalculateBlockTotals(block *types.Block) {
-	geth.TotalEth = big.NewInt(0)
+	geth.TotalEthTransferred = big.NewInt(0)
 	geth.ContractsCreated = 0
 	geth.TokenTransfers = 0
 	geth.EthTransfers = 0
+
+	geth.GasSpent = big.NewInt(0)
+	geth.GasPriceMean = big.NewInt(0)
+	geth.GasPriceMedian = big.NewInt(0)
+	gasPriceSum := big.NewInt(0)
+	gasPrices := []*big.Int{}
+
+	geth.TransactionNonceMedian = 0
+	geth.TransactionNonceMean = 0
+	txNonceSum := uint64(0)
+	txNonces := []uint64{}
+
 	for _, b := range block.Transactions() {
 
 		if b.To() == nil {
@@ -115,14 +139,36 @@ func CalculateBlockTotals(block *types.Block) {
 			geth.EthTransfers++
 		}
 
-		geth.TotalEth.Add(geth.TotalEth, b.Value())
+		geth.TotalEthTransferred.Add(geth.TotalEthTransferred, b.Value())
+
+		geth.GasSpent.Add(geth.GasSpent, new(big.Int).Mul(b.GasPrice(), new(big.Int).SetUint64(b.Gas())))
+		gasPriceSum.Add(gasPriceSum, b.GasPrice())
+		gasPrices = append(gasPrices, b.GasPrice())
+
+		txNonces = append(txNonces, b.Nonce())
+		txNonceSum += b.Nonce()
+	}
+
+	geth.GasPriceMean.Div(gasPriceSum, new(big.Int).SetUint64(uint64(block.Transactions().Len())))
+
+	if len(gasPrices) >= 2 {
+		geth.GasPriceMedian = gasPrices[len(gasPrices)/2]
+	} else if len(gasPrices) == 1 {
+		geth.GasPriceMedian = gasPrices[0]
+	}
+
+	geth.TransactionNonceMean = txNonceSum / uint64(block.Transactions().Len())
+	if len(txNonces) >= 2 {
+		geth.TransactionNonceMedian = txNonces[len(txNonces)/2]
+	} else if len(txNonces) == 1 {
+		geth.TransactionNonceMedian = txNonces[0]
 	}
 
 	size := strings.Split(geth.CurrentBlock.Size().String(), " ")
 	geth.BlockSize = stringToFloat(size[0]) * 1000
 }
 
-func calculateEtherbaseCounters(block *types.Block) {
+func calculateEtherbaseCounters(block, lastBlock *types.Block) {
 	blockCount++
 
 	txLen := block.Transactions().Len()
@@ -130,12 +176,16 @@ func calculateEtherbaseCounters(block *types.Block) {
 
 	addr := block.Coinbase()
 
+	if lastBlock != nil {
+		etherbaseBlockTimeDeltaMS[addr] = block.Time() - lastBlock.Time()
+	}
+
 	if _, ok := etherbaseBlocks[addr]; !ok {
 		etherbaseBlocks[addr] = 1
-		etherbaseBlocksRatio[addr] = 1/float64(blockCount)
+		etherbaseBlocksRatio[addr] = 1 / float64(blockCount)
 	} else {
 		etherbaseBlocks[addr]++
-		etherbaseBlocksRatio[addr] = float64(etherbaseBlocks[addr])/float64(blockCount)
+		etherbaseBlocksRatio[addr] = float64(etherbaseBlocks[addr]) / float64(blockCount)
 	}
 
 	if _, ok := etherbaseTransactions[addr]; !ok {
@@ -167,10 +217,14 @@ func Routine() {
 
 		if lastBlock == nil || geth.CurrentBlock.NumberU64() > lastBlock.NumberU64() {
 			log.Printf("Received block #%v with %v transactions (%v)\n", geth.CurrentBlock.NumberU64(), len(geth.CurrentBlock.Transactions()), geth.CurrentBlock.Hash().String())
+
 			geth.LastBlockUpdate = time.Now()
 			geth.LoadTime = time.Now().Sub(t1).Seconds()
+			if lastBlock != nil {
+				geth.BlockTimeDelta = geth.CurrentBlock.Time() - lastBlock.Time()
+			}
 
-			calculateEtherbaseCounters(geth.CurrentBlock)
+			calculateEtherbaseCounters(geth.CurrentBlock, lastBlock)
 		}
 
 		if watchingAddresses != "" {
@@ -205,16 +259,27 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	CalculateBlockTotals(block)
 
 	allOut = append(allOut, fmt.Sprintf("geth_block %v", block.NumberU64()))
-	allOut = append(allOut, fmt.Sprintf("geth_seconds_last_block %0.2f", time.Now().Sub(geth.LastBlockUpdate).Seconds()))
-	allOut = append(allOut, fmt.Sprintf("geth_block_transactions %v", len(block.Transactions())))
-	allOut = append(allOut, fmt.Sprintf("geth_block_value %v", ToEther(geth.TotalEth)))
-	allOut = append(allOut, fmt.Sprintf("geth_block_gas_used %v", block.GasUsed()))
-	allOut = append(allOut, fmt.Sprintf("geth_block_gas_limit %v", block.GasLimit()))
+
+	allOut = append(allOut, fmt.Sprintf("geth_seconds_last_block_subjective %0.2f", time.Now().Sub(geth.LastBlockUpdate).Seconds()))
+	allOut = append(allOut, fmt.Sprintf("geth_seconds_last_block_reported %v", geth.BlockTimeDelta))
+
+	allOut = append(allOut, fmt.Sprintf("geth_block_transactions %v", block.Transactions().Len()))
+	allOut = append(allOut, fmt.Sprintf("geth_block_value_transferred %v", ToEther(geth.TotalEthTransferred)))
 	allOut = append(allOut, fmt.Sprintf("geth_block_nonce %v", block.Nonce()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_difficulty %v", block.Difficulty()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_uncles %v", len(block.Uncles())))
 	allOut = append(allOut, fmt.Sprintf("geth_block_size_bytes %v", geth.BlockSize))
-	allOut = append(allOut, fmt.Sprintf("geth_gas_price %v", geth.SugGasPrice))
+
+	allOut = append(allOut, fmt.Sprintf("geth_suggested_gas_price %v", geth.SugGasPrice))
+	allOut = append(allOut, fmt.Sprintf("geth_block_gas_used %v", block.GasUsed()))
+	allOut = append(allOut, fmt.Sprintf("geth_block_gas_limit %v", block.GasLimit()))
+	allOut = append(allOut, fmt.Sprintf("geth_block_gas_spent %v", geth.GasSpent))
+	allOut = append(allOut, fmt.Sprintf("geth_block_gas_price_mean %v", geth.GasPriceMean))
+	allOut = append(allOut, fmt.Sprintf("geth_block_gas_price_median %v", geth.GasPriceMedian))
+
+	allOut = append(allOut, fmt.Sprintf("geth_block_tx_nonce_mean %v", geth.TransactionNonceMean))
+	allOut = append(allOut, fmt.Sprintf("geth_block_tx_nonce_median %v", geth.TransactionNonceMedian))
+
 	allOut = append(allOut, fmt.Sprintf("geth_pending_transactions %v", geth.PendingTx))
 	allOut = append(allOut, fmt.Sprintf("geth_network_id %v", geth.NetworkId))
 	allOut = append(allOut, fmt.Sprintf("geth_chain_id %v", geth.ChainId))
@@ -234,13 +299,17 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 		allOut = append(allOut, fmt.Sprintf("geth_address_nonce{address=\"%v\"} %v", v.Address, v.Nonce))
 	}
 	for k, v := range etherbaseBlocks {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_blocks{address=\"%s\"} %v", k.Hex(), v))
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block{address=\"%s\"} %v", k.Hex(), v))
 	}
 	for k, v := range etherbaseBlocksRatio {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_ratios{address=\"%s\"} %0.2f", k.Hex(), v))
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_ratio{address=\"%s\"} %0.2f", k.Hex(), v))
 	}
+	for k, v := range etherbaseBlockTimeDeltaMS {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_time_delta{address=\"%s\"} %v", k.Hex(), v))
+	}
+
 	for k, v := range etherbaseTransactions {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transactions{address=\"%s\"} %v", k.Hex(), v))
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transaction{address=\"%s\"} %v", k.Hex(), v))
 	}
 	for k, v := range etherbaseTransactionsRatio {
 		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transaction_ratio{address=\"%s\"} %0.2f", k.Hex(), v))
