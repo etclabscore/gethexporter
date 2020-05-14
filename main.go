@@ -46,6 +46,7 @@ type GethInfo struct {
 	SugGasPrice      *big.Int
 	PendingTx        uint
 	NetworkId        *big.Int
+	ChainId          *big.Int
 }
 
 type Address struct {
@@ -128,6 +129,7 @@ func Routine() {
 		geth.SugGasPrice, _ = eth.SuggestGasPrice(ctx)
 		geth.PendingTx, _ = eth.PendingTransactionCount(ctx)
 		geth.NetworkId, _ = eth.NetworkID(ctx)
+		geth.ChainId, _ = eth.ChainID(ctx)
 		geth.Sync, _ = eth.SyncProgress(ctx)
 
 		if lastBlock == nil || geth.CurrentBlock.NumberU64() > lastBlock.NumberU64() {
@@ -180,6 +182,7 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	allOut = append(allOut, fmt.Sprintf("geth_gas_price %v", geth.SugGasPrice))
 	allOut = append(allOut, fmt.Sprintf("geth_pending_transactions %v", geth.PendingTx))
 	allOut = append(allOut, fmt.Sprintf("geth_network_id %v", geth.NetworkId))
+	allOut = append(allOut, fmt.Sprintf("geth_chain_id %v", geth.ChainId))
 	allOut = append(allOut, fmt.Sprintf("geth_contracts_created %v", geth.ContractsCreated))
 	allOut = append(allOut, fmt.Sprintf("geth_token_transfers %v", geth.TokenTransfers))
 	allOut = append(allOut, fmt.Sprintf("geth_eth_transfers %v", geth.EthTransfers))
