@@ -84,7 +84,7 @@ func main() {
 	}
 }
 
-func CalculateTotals(block *types.Block) {
+func CalculateBlockTotals(block *types.Block) {
 	geth.TotalEth = big.NewInt(0)
 	geth.ContractsCreated = 0
 	geth.TokenTransfers = 0
@@ -165,7 +165,7 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("issue receiving block from URL: %v", geth.GethServer)))
 		return
 	}
-	CalculateTotals(block)
+	CalculateBlockTotals(block)
 
 	allOut = append(allOut, fmt.Sprintf("geth_block %v", block.NumberU64()))
 	allOut = append(allOut, fmt.Sprintf("geth_seconds_last_block %0.2f", time.Now().Sub(geth.LastBlockUpdate).Seconds()))
