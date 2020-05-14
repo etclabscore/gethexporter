@@ -18,16 +18,24 @@ import (
 )
 
 var (
-	eth               *ethclient.Client
-	geth              *GethInfo
-	delay             int
-	watchingAddresses string
-	addresses         map[string]Address
+	eth                        *ethclient.Client
+	geth                       *GethInfo
+	delay                      int
+	watchingAddresses          string
+	blockCount                 int
+	transactionCount int
+	addresses                  map[string]Address
+	etherbaseBlocks            map[common.Address]int
+	etherbaseBlocksRatio       map[common.Address]float64
+	etherbaseTransactions      map[common.Address]int
+	etherbaseTransactionsRatio map[common.Address]float64
 )
 
 func init() {
 	geth = new(GethInfo)
 	addresses = make(map[string]Address)
+	etherbaseBlocks = make(map[common.Address]int)
+	etherbaseTransactions = make(map[common.Address]int)
 	geth.TotalEth = big.NewInt(0)
 }
 
@@ -114,6 +122,31 @@ func CalculateBlockTotals(block *types.Block) {
 	geth.BlockSize = stringToFloat(size[0]) * 1000
 }
 
+func calculateEtherbaseCounters(block *types.Block) {
+	blockCount++
+
+	txLen := block.Transactions().Len()
+	transactionCount += txLen
+
+	addr := block.Coinbase()
+
+	if _, ok := etherbaseBlocks[addr]; !ok {
+		etherbaseBlocks[addr] = 1
+		etherbaseBlocksRatio[addr] = 1/float64(blockCount)
+	} else {
+		etherbaseBlocks[addr]++
+		etherbaseBlocksRatio[addr] = float64(etherbaseBlocks[addr])/float64(blockCount)
+	}
+
+	if _, ok := etherbaseTransactions[addr]; !ok {
+		etherbaseTransactions[addr] = txLen
+		etherbaseTransactionsRatio[addr] = float64(txLen) / float64(transactionCount)
+	} else {
+		etherbaseTransactions[addr] += txLen
+		etherbaseTransactionsRatio[addr] = float64(etherbaseTransactions[addr]) / float64(transactionCount)
+	}
+}
+
 func Routine() {
 	var lastBlock *types.Block
 	ctx := context.Background()
@@ -136,6 +169,8 @@ func Routine() {
 			log.Printf("Received block #%v with %v transactions (%v)\n", geth.CurrentBlock.NumberU64(), len(geth.CurrentBlock.Transactions()), geth.CurrentBlock.Hash().String())
 			geth.LastBlockUpdate = time.Now()
 			geth.LoadTime = time.Now().Sub(t1).Seconds()
+
+			calculateEtherbaseCounters(geth.CurrentBlock)
 		}
 
 		if watchingAddresses != "" {
@@ -197,6 +232,18 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	for _, v := range addresses {
 		allOut = append(allOut, fmt.Sprintf("geth_address_balance{address=\"%v\"} %v", v.Address, ToEther(v.Balance).String()))
 		allOut = append(allOut, fmt.Sprintf("geth_address_nonce{address=\"%v\"} %v", v.Address, v.Nonce))
+	}
+	for k, v := range etherbaseBlocks {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_blocks{address=\"%s\"} %v", k.Hex(), v))
+	}
+	for k, v := range etherbaseBlocksRatio {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_ratios{address=\"%s\"} %0.2f", k.Hex(), v))
+	}
+	for k, v := range etherbaseTransactions {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transactions{address=\"%s\"} %v", k.Hex(), v))
+	}
+	for k, v := range etherbaseTransactionsRatio {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transaction_ratio{address=\"%s\"} %0.2f", k.Hex(), v))
 	}
 
 	w.Write([]byte(strings.Join(allOut, "\n")))
