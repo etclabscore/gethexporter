@@ -528,11 +528,11 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 15,
-        "w": 12,
+        "h": 13,
+        "w": 24,
         "x": 0,
         "y": 22
       },
@@ -544,6 +544,7 @@
         "current": true,
         "max": true,
         "min": true,
+        "rightSide": true,
         "show": true,
         "total": false,
         "values": true
@@ -561,7 +562,7 @@
       "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
-      "steppedLine": false,
+      "steppedLine": true,
       "targets": [
         {
           "expr": "geth_etherbase_balance",
@@ -577,7 +578,7 @@
       "title": "Etherbase Balances (log2)",
       "tooltip": {
         "shared": false,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -619,7 +620,7 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {
@@ -642,5 +643,5 @@
   "variables": {
     "list": []
   },
-  "version": 10
+  "version": 12
 }
