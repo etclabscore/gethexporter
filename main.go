@@ -375,7 +375,6 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	allOut = append(allOut, fmt.Sprintf("geth_block_difficulty %v", block.Difficulty()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_uncles_count %v", len(block.Uncles())))
 	allOut = append(allOut, fmt.Sprintf("geth_block_size_bytes %v", geth.BlockSize))
-	allOut = append(allOut, fmt.Sprintf("geth_block_etherbase %v", block.Coinbase().Hex()))
 
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_used %v", block.GasUsed()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_limit %v", block.GasLimit()))
