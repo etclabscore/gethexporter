@@ -197,18 +197,15 @@ func calculateEtherbaseCounters(block, lastBlock *types.Block) {
 
 	if _, ok := etherbaseBlocks[addr]; !ok {
 		etherbaseBlocks[addr] = 1
-		etherbaseBlocksRatio[addr] = 1 / float64(blockCount)
+		etherbaseTransactions[addr] = txLen
 	} else {
 		etherbaseBlocks[addr]++
-		etherbaseBlocksRatio[addr] = float64(etherbaseBlocks[addr]) / float64(blockCount)
+		etherbaseTransactions[addr] += txLen
 	}
 
-	if _, ok := etherbaseTransactions[addr]; !ok {
-		etherbaseTransactions[addr] = txLen
-		etherbaseTransactionsRatio[addr] = float64(txLen) / float64(transactionCount)
-	} else {
-		etherbaseTransactions[addr] += txLen
-		etherbaseTransactionsRatio[addr] = float64(etherbaseTransactions[addr]) / float64(transactionCount)
+	for k := range etherbaseBlocks {
+		etherbaseBlocksRatio[k] = float64(etherbaseBlocks[k]) / float64(blockCount)
+		etherbaseTransactionsRatio[k] = float64(etherbaseTransactions[k]) / float64(transactionCount)
 	}
 }
 
