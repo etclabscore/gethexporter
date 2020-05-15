@@ -3,11 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
 	"math/big"
 	"net/http"
@@ -15,34 +10,61 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/patrickmn/go-cache"
 )
 
+type etherbaseTransactionsT struct {
+	base common.Address
+	nTxs int
+}
+
 var (
-	eth                        *ethclient.Client
-	geth                       *GethInfo
-	delay                      int
-	watchingAddresses          string
-	blockCount                 int
-	transactionCount           int
-	addresses                  map[string]Address
-	etherbaseBlocks            map[common.Address]int
-	etherbaseBlocksRatio       map[common.Address]float64
-	etherbaseBlockTimeDeltaMS  map[common.Address]uint64
-	etherbaseTransactions      map[common.Address]int
-	etherbaseTransactionsRatio map[common.Address]float64
+	eth               *ethclient.Client
+	geth              *GethInfo
+	delay             int
+	watchingAddresses string
+	blockCount        int
+	transactionCount  int
+	addresses         map[string]Address
+	etherbaseBalanceM map[string]*big.Int
+	//etherbaseBlocks            map[common.Address]int
+	//etherbaseBlocksRatio       map[common.Address]float64
+	//etherbaseBlockTimeDeltaMS  map[common.Address]uint64
+	//etherbaseTransactions      map[common.Address]int
+	//etherbaseTransactionsRatio map[common.Address]float64
+
+	//etherbaseBlockTimeDeltaCache = cache.New(15*24*time.Hour, 10*time.Minute)
+	etherbaseBalances = cache.New(15*24*time.Hour, 10*time.Minute)
+
+	etherbaseBlocks100   map[common.Address]int
+	etherbaseBlocks1000  map[common.Address]int
+	etherbaseBlocks10000 map[common.Address]int
+
+	etherbaseTransactions100   map[common.Address]int
+	etherbaseTransactions1000  map[common.Address]int
+	etherbaseTransactions10000 map[common.Address]int
 )
+
+var etherbaseBlocksSl = []common.Address{}
+var etherbaseTransactionsSl = []etherbaseTransactionsT{}
 
 func init() {
 	geth = new(GethInfo)
 	addresses = make(map[string]Address)
 	geth.TotalEthTransferred = big.NewInt(0)
 
-	etherbaseBlocks = make(map[common.Address]int)
-	etherbaseBlocksRatio = make(map[common.Address]float64)
-	etherbaseBlockTimeDeltaMS = make(map[common.Address]uint64)
+	//etherbaseBlocks = make(map[common.Address]int)
+	//etherbaseBlocksRatio = make(map[common.Address]float64)
+	//etherbaseBlockTimeDeltaMS = make(map[common.Address]uint64)
 
-	etherbaseTransactions = make(map[common.Address]int)
-	etherbaseTransactionsRatio = make(map[common.Address]float64)
+	//etherbaseTransactions = make(map[common.Address]int)
+	//etherbaseTransactionsRatio = make(map[common.Address]float64)
 }
 
 type GethInfo struct {
@@ -94,15 +116,15 @@ func main() {
 
 	log.Printf("Connecting to Ethereum node: %v\n", geth.GethServer)
 
-	for ; eth == nil || err != nil ; eth, err = ethclient.Dial(geth.GethServer) {
+	for ; eth == nil || err != nil; eth, err = ethclient.Dial(geth.GethServer) {
 		log.Println("ethclient", "eth", eth, "err", err)
 		log.Println("re-attempting in 5s...")
-		time.Sleep(5*time.Second)
+		time.Sleep(5 * time.Second)
 	}
-	for ; geth.CurrentBlock == nil || err != nil ; geth.CurrentBlock, err = eth.BlockByNumber(context.Background(), nil) {
+	for ; geth.CurrentBlock == nil || err != nil; geth.CurrentBlock, err = eth.BlockByNumber(context.Background(), nil) {
 		log.Println("init client current block", "block", geth.CurrentBlock, err)
 		log.Println("re-attempting in 5s...")
-		time.Sleep(5*time.Second)
+		time.Sleep(5 * time.Second)
 	}
 
 	log.Println("got current block", geth.CurrentBlock.Number(), geth.CurrentBlock.Hash().Hex())
@@ -191,22 +213,80 @@ func calculateEtherbaseCounters(block, lastBlock *types.Block) {
 
 	addr := block.Coinbase()
 
-	if lastBlock != nil {
-		etherbaseBlockTimeDeltaMS[addr] = block.Time() - lastBlock.Time()
+	for len(etherbaseBlocksSl) >= 10000 {
+		// pop
+		etherbaseBlocksSl = etherbaseBlocksSl[:len(etherbaseBlocksSl)-1]
+	}
+	// push front
+	etherbaseBlocksSl = append([]common.Address{addr}, etherbaseBlocksSl...)
+
+	for len(etherbaseTransactionsSl) >= 10000 {
+		// pop
+		etherbaseTransactionsSl = etherbaseTransactionsSl[:len(etherbaseTransactionsSl)-1]
+	}
+	// push front
+	etherbaseTransactionsSl = append([]etherbaseTransactionsT{{base: addr, nTxs: txLen}}, etherbaseTransactionsSl...)
+
+	etherbaseBlocks100 = make(map[common.Address]int, 100)
+	etherbaseBlocks1000 = make(map[common.Address]int, 1000)
+	etherbaseBlocks10000 = make(map[common.Address]int, 10000)
+
+	etherbaseTransactions100 = make(map[common.Address]int, 100)
+	etherbaseTransactions1000 = make(map[common.Address]int, 1000)
+	etherbaseTransactions10000 = make(map[common.Address]int, 10000)
+
+	for i, v := range etherbaseBlocksSl {
+		if i <= 100-1 {
+			if _, ok := etherbaseBlocks100[v]; !ok {
+				etherbaseBlocks100[v] = 1
+			} else {
+				etherbaseBlocks100[v]++
+			}
+		}
+		if i <= 1000-1 {
+			if _, ok := etherbaseBlocks1000[v]; !ok {
+				etherbaseBlocks1000[v] = 1
+			} else {
+				etherbaseBlocks1000[v]++
+			}
+		}
+		if i <= 10000-1 {
+			if _, ok := etherbaseBlocks10000[v]; !ok {
+				etherbaseBlocks10000[v] = 1
+			} else {
+				etherbaseBlocks10000[v]++
+			}
+		}
 	}
 
-	if _, ok := etherbaseBlocks[addr]; !ok {
-		etherbaseBlocks[addr] = 1
-		etherbaseTransactions[addr] = txLen
-	} else {
-		etherbaseBlocks[addr]++
-		etherbaseTransactions[addr] += txLen
+	for i, v := range etherbaseTransactionsSl {
+		if i <= 100-1 {
+			if _, ok := etherbaseTransactions100[v.base]; !ok {
+				etherbaseTransactions100[v.base] = v.nTxs
+			} else {
+				etherbaseTransactions100[v.base] += v.nTxs
+			}
+		}
+		if i <= 1000-1 {
+			if _, ok := etherbaseTransactions1000[v.base]; !ok {
+				etherbaseTransactions1000[v.base] = v.nTxs
+			} else {
+				etherbaseTransactions1000[v.base] += v.nTxs
+			}
+		}
+		if i <= 10000-1 {
+			if _, ok := etherbaseTransactions10000[v.base]; !ok {
+				etherbaseTransactions10000[v.base] = v.nTxs
+			} else {
+				etherbaseTransactions10000[v.base] += v.nTxs
+			}
+		}
 	}
 
-	for k := range etherbaseBlocks {
-		etherbaseBlocksRatio[k] = float64(etherbaseBlocks[k]) / float64(blockCount)
-		etherbaseTransactionsRatio[k] = float64(etherbaseTransactions[k]) / float64(transactionCount)
-	}
+	// todo
+	//if lastBlock != nil {
+	//	etherbaseBlockTimeDeltaCache.SetDefault(addr.Hex(), block.Time() - lastBlock.Time())
+	//}
 }
 
 func Routine() {
@@ -237,6 +317,18 @@ func Routine() {
 			}
 
 			calculateEtherbaseCounters(geth.CurrentBlock, lastBlock)
+
+			// Update the winning etherbase in the ttl map
+			etherbaseBalances.SetDefault(geth.CurrentBlock.Coinbase().Hex(), true)
+
+			its := etherbaseBalances.Items()
+			etherbaseBalanceM = make(map[string]*big.Int, len(its))
+			for k := range its {
+				b, err := eth.BalanceAt(ctx, common.HexToAddress(k), geth.CurrentBlock.Number())
+				if err == nil {
+					etherbaseBalanceM[k] = b
+				}
+			}
 		}
 
 		if watchingAddresses != "" {
@@ -255,6 +347,7 @@ func Routine() {
 
 		lastBlock = geth.CurrentBlock
 		time.Sleep(time.Duration(delay) * time.Millisecond)
+
 	}
 }
 
@@ -282,6 +375,7 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	allOut = append(allOut, fmt.Sprintf("geth_block_difficulty %v", block.Difficulty()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_uncles_count %v", len(block.Uncles())))
 	allOut = append(allOut, fmt.Sprintf("geth_block_size_bytes %v", geth.BlockSize))
+	allOut = append(allOut, fmt.Sprintf("geth_block_etherbase %v", block.Coinbase().Hex()))
 
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_used %v", block.GasUsed()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_limit %v", block.GasLimit()))
@@ -318,21 +412,29 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 		allOut = append(allOut, fmt.Sprintf("geth_address_balance{address=\"%v\"} %v", v.Address, ToEther(v.Balance).String()))
 		allOut = append(allOut, fmt.Sprintf("geth_address_nonce{address=\"%v\"} %v", v.Address, v.Nonce))
 	}
-	for k, v := range etherbaseBlocks {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_total{address=\"%s\"} %v", k.Hex(), v))
+
+	for k, v := range etherbaseBlocks100 {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_100_total{address=\"%s\"} %v", k.Hex(), v))
 	}
-	for k, v := range etherbaseBlocksRatio {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_ratio{address=\"%s\"} %0.2f", k.Hex(), v))
+	for k, v := range etherbaseBlocks1000 {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_1000_total{address=\"%s\"} %v", k.Hex(), v))
 	}
-	for k, v := range etherbaseBlockTimeDeltaMS {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_time_delta_seconds{address=\"%s\"} %v", k.Hex(), v))
+	for k, v := range etherbaseBlocks10000 {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_10000_total{address=\"%s\"} %v", k.Hex(), v))
 	}
 
-	for k, v := range etherbaseTransactions {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transaction_total{address=\"%s\"} %v", k.Hex(), v))
+	for k, v := range etherbaseTransactions100 {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transaction_100_total{address=\"%s\"} %v", k.Hex(), v))
 	}
-	for k, v := range etherbaseTransactionsRatio {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transaction_ratio{address=\"%s\"} %0.2f", k.Hex(), v))
+	for k, v := range etherbaseTransactions1000 {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transaction_1000_total{address=\"%s\"} %v", k.Hex(), v))
+	}
+	for k, v := range etherbaseTransactions10000 {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_transaction_10000_total{address=\"%s\"} %v", k.Hex(), v))
+	}
+
+	for k, v := range etherbaseBalanceM {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_balance{address=\"%s\"} %v", k, ToEther(v)))
 	}
 
 	w.Write([]byte(strings.Join(allOut, "\n")))
