@@ -619,7 +619,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 4,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 5
       },
@@ -710,8 +710,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 4,
-        "w": 8,
-        "x": 8,
+        "w": 18,
+        "x": 6,
         "y": 5
       },
       "hiddenSeries": false,
@@ -824,11 +824,12 @@
       "hiddenSeries": false,
       "id": 18,
       "legend": {
-        "alignAsTable": false,
+        "alignAsTable": true,
         "avg": true,
         "current": true,
         "max": true,
         "min": true,
+        "rightSide": true,
         "show": true,
         "total": false,
         "values": true
@@ -929,7 +930,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 24,
+        "w": 12,
         "x": 0,
         "y": 16
       },
@@ -1015,13 +1016,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 10,
+      "fill": 5,
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 22
+        "w": 12,
+        "x": 12,
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 8,
@@ -1054,8 +1055,9 @@
         {
           "expr": "geth_block_size_bytes",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 3,
-          "legendFormat": "Token Transfers",
+          "legendFormat": "block size bytes",
           "refId": "A"
         }
       ],
@@ -1074,7 +1076,7 @@
         "buckets": null,
         "mode": "time",
         "name": null,
-        "show": false,
+        "show": true,
         "values": []
       },
       "yaxes": [
@@ -1092,7 +1094,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -1107,7 +1109,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 22
       },
       "id": 44,
       "panels": [],
@@ -1128,7 +1130,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 23
       },
       "hiddenSeries": false,
       "id": 5,
@@ -1138,7 +1140,7 @@
         "current": false,
         "max": true,
         "min": true,
-        "rightSide": false,
+        "rightSide": true,
         "show": true,
         "total": true,
         "values": true
@@ -1240,18 +1242,17 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 34
       },
       "hiddenSeries": false,
-      "id": 75,
+      "id": 52,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
-        "hideEmpty": false,
-        "hideZero": false,
         "max": true,
         "min": true,
+        "rightSide": true,
         "show": true,
         "total": false,
         "values": true
@@ -1266,114 +1267,47 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
+      "seriesOverrides": [
         {
-          "expr": "geth_block_gas_used",
-          "interval": "",
-          "legendFormat": "block gas used",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Block Gas Used",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
+          "alias": "gas price mean",
+          "dashes": true,
+          "lines": false
         },
         {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
+          "alias": "api estimate gasprice",
+          "color": "#8F3BB8",
+          "fill": 0,
+          "linewidth": 2
         }
       ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 46
-      },
-      "hiddenSeries": false,
-      "id": 53,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": true,
-        "min": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "geth_block_gas_spent / 1000000000",
+          "expr": "geth_block_gas_price_mean / 1e9",
           "interval": "",
-          "legendFormat": "block gas spent",
+          "legendFormat": "gas price mean",
           "refId": "A"
+        },
+        {
+          "expr": "geth_block_gas_price_median / 1e9",
+          "interval": "",
+          "legendFormat": "gas price median",
+          "refId": "B"
+        },
+        {
+          "expr": "geth_api_suggested_gas_price / 1e9",
+          "interval": "",
+          "legendFormat": "api estimate gasprice",
+          "refId": "C"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Block Gas Spend",
+      "title": "Block Transactions Gas Price (/1e9)",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1422,16 +1356,19 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 52
+        "y": 40
       },
       "hiddenSeries": false,
-      "id": 52,
+      "id": 75,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
+        "hideEmpty": false,
+        "hideZero": false,
         "max": true,
         "min": true,
+        "rightSide": true,
         "show": true,
         "total": false,
         "values": true
@@ -1446,27 +1383,21 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "gas price mean",
-          "dashes": true,
-          "lines": false
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "geth_block_gas_price_mean / 1000000000",
+          "expr": "geth_block_gas_used ",
           "interval": "",
-          "legendFormat": "gas price mean",
+          "legendFormat": "gas used",
           "refId": "A"
         },
         {
-          "expr": "geth_block_gas_price_median / 1000000000",
+          "expr": "geth_block_gas_spent / 1e9",
           "interval": "",
-          "legendFormat": "gas price median",
+          "legendFormat": "gas spent / 1e9",
           "refId": "B"
         }
       ],
@@ -1474,7 +1405,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Block Transactions Gas Price",
+      "title": "Block Tx Gas",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1513,7 +1444,7 @@
     },
     {
       "aliasColors": {},
-      "bars": false,
+      "bars": true,
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
@@ -1523,23 +1454,21 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 59
+        "y": 47
       },
       "hiddenSeries": false,
-      "id": 74,
+      "id": 57,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": true,
-        "hideEmpty": false,
-        "hideZero": false,
         "max": true,
-        "min": true,
+        "min": false,
         "show": true,
-        "total": false,
+        "total": true,
         "values": true
       },
-      "lines": true,
+      "lines": false,
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
@@ -1555,9 +1484,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "geth_api_suggested_gas_price / 1000000000",
+          "expr": "geth_block_transactions_sum_value_transfer",
           "interval": "",
-          "legendFormat": "api suggested gas price",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -1565,7 +1494,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "API Suggested Gas Price",
+      "title": "ETH Value Transferred",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1614,7 +1543,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 65
+        "y": 53
       },
       "hiddenSeries": false,
       "id": 50,
@@ -1712,7 +1641,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 65
+        "y": 53
       },
       "hiddenSeries": false,
       "id": 76,
@@ -1807,99 +1736,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 72
-      },
-      "hiddenSeries": false,
-      "id": 57,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "total": true,
-        "values": true
-      },
-      "lines": false,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "geth_block_transactions_sum_value_transfer",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "ETH Value Transferred",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": true,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
         "h": 16,
         "w": 4,
         "x": 0,
-        "y": 78
+        "y": 60
       },
       "hiddenSeries": false,
       "id": 69,
@@ -1992,7 +1832,7 @@
         "h": 16,
         "w": 4,
         "x": 4,
-        "y": 78
+        "y": 60
       },
       "hiddenSeries": false,
       "id": 70,
@@ -2085,7 +1925,7 @@
         "h": 16,
         "w": 4,
         "x": 8,
-        "y": 78
+        "y": 60
       },
       "hiddenSeries": false,
       "id": 71,
@@ -2178,7 +2018,7 @@
         "h": 16,
         "w": 4,
         "x": 12,
-        "y": 78
+        "y": 60
       },
       "hiddenSeries": false,
       "id": 72,
@@ -2271,7 +2111,7 @@
         "h": 16,
         "w": 4,
         "x": 16,
-        "y": 78
+        "y": 60
       },
       "hiddenSeries": false,
       "id": 67,
@@ -2364,7 +2204,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 94
+        "y": 76
       },
       "id": 42,
       "panels": [],
@@ -2414,5 +2254,5 @@
   "variables": {
     "list": []
   },
-  "version": 39
+  "version": 42
 }
