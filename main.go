@@ -79,15 +79,21 @@ func main() {
 	var err error
 	defer eth.Close()
 	geth.GethServer = os.Getenv("GETH")
+	if geth.GethServer == "" {
+		panic("empty geth server address")
+	}
 	watchingAddresses = os.Getenv("ADDRESSES")
 	delay, _ = strconv.Atoi(os.Getenv("DELAY"))
 	if delay == 0 {
 		delay = 500
 	}
-	if geth.GethServer == "" {
-		panic("empty geth server address")
+	metricsAddr := ":6061"
+	if got := os.Getenv("METRICSADDR"); got != "" {
+		metricsAddr = got
 	}
+
 	log.Printf("Connecting to Ethereum node: %v\n", geth.GethServer)
+
 	for ; eth == nil || err != nil ; eth, err = ethclient.Dial(geth.GethServer) {
 		log.Println("ethclient", "eth", eth, "err", err)
 		log.Println("re-attempting in 5s...")
@@ -98,15 +104,15 @@ func main() {
 		log.Println("re-attempting in 5s...")
 		time.Sleep(5*time.Second)
 	}
-	
+
 	log.Println("got current block", geth.CurrentBlock.Number(), geth.CurrentBlock.Hash().Hex())
 
 	go Routine()
 
-	log.Printf("Geth Exporter running on http://localhost:6061/metrics\n")
+	log.Printf("Geth Exporter running on %s/metrics\n", metricsAddr)
 
 	http.HandleFunc("/metrics", MetricsHttp)
-	err = http.ListenAndServe(":6061", nil)
+	err = http.ListenAndServe(metricsAddr, nil)
 	if err != nil {
 		panic(err)
 	}
