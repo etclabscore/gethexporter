@@ -93,14 +93,17 @@ func main() {
 		log.Println("re-attempting in 5s...")
 		time.Sleep(5*time.Second)
 	}
-	geth.CurrentBlock, err = eth.BlockByNumber(context.TODO(), nil)
-	if err != nil {
-		panic(err)
+	for ; geth.CurrentBlock == nil || err != nil ; geth.CurrentBlock, err = eth.BlockByNumber(context.Background(), nil) {
+		log.Println("init client current block", "block", geth.CurrentBlock, err)
+		log.Println("re-attempting in 5s...")
+		time.Sleep(5*time.Second)
 	}
+	
+	log.Println("got current block", geth.CurrentBlock.Number(), geth.CurrentBlock.Hash().Hex())
 
 	go Routine()
 
-	log.Printf("Geth Exporter running on http://localhost:9090/metrics\n")
+	log.Printf("Geth Exporter running on http://localhost:6061/metrics\n")
 
 	http.HandleFunc("/metrics", MetricsHttp)
 	err = http.ListenAndServe(":6061", nil)
@@ -255,6 +258,7 @@ func Routine() {
 //
 // HTTP response handler for /metrics
 func MetricsHttp(w http.ResponseWriter, r *http.Request) {
+	log.Println("metrics handler", r.Method, r.Proto, r.Host, r.RequestURI)
 	var allOut []string
 	block := geth.CurrentBlock
 	if block == nil {
