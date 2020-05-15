@@ -24,7 +24,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 0,
+      "fill": 3,
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
@@ -54,10 +54,26 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "account commits count magnified",
+          "color": "#E02F44",
+          "fill": 0
+        },
+        {
+          "alias": "block size bytes",
+          "color": "#8AB8FF",
+          "linewidth": 0
+        },
+        {
+          "alias": "block gas used",
+          "color": "#FFEE52",
+          "linewidth": 0
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
-      "steppedLine": false,
+      "steppedLine": true,
       "targets": [
         {
           "expr": "geth_block_gas_used / 10",
@@ -150,5 +166,5 @@
   "variables": {
     "list": []
   },
-  "version": 4
+  "version": 6
 }
