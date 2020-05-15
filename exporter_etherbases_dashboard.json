@@ -398,7 +398,7 @@
       "title": "Etherbase Block Ratio 100",
       "tooltip": {
         "shared": false,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -643,5 +643,5 @@
   "variables": {
     "list": []
   },
-  "version": 12
+  "version": 13
 }
