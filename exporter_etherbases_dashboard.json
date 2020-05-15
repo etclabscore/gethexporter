@@ -171,99 +171,9 @@
       "fill": 5,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
-        "w": 8,
+        "h": 11,
+        "w": 11,
         "x": 0,
-        "y": 3
-      },
-      "hiddenSeries": false,
-      "id": 6,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 0,
-      "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "geth_etherbase_block_10000_total",
-          "interval": "",
-          "legendFormat": "{{address}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Etherbase Block Ratio 10k",
-      "tooltip": {
-        "shared": false,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": "10000",
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": "1",
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 5,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 8,
         "y": 3
       },
       "hiddenSeries": false,
@@ -351,9 +261,9 @@
       "fill": 5,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 16,
+        "h": 22,
+        "w": 13,
+        "x": 11,
         "y": 3
       },
       "hiddenSeries": false,
@@ -364,7 +274,7 @@
         "current": true,
         "max": true,
         "min": true,
-        "rightSide": false,
+        "rightSide": true,
         "show": true,
         "total": false,
         "values": true
@@ -441,10 +351,100 @@
       "fill": 5,
       "fillGradient": 0,
       "gridPos": {
+        "h": 11,
+        "w": 11,
+        "x": 0,
+        "y": 14
+      },
+      "hiddenSeries": false,
+      "id": 6,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 0,
+      "nullPointMode": "null as zero",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "geth_etherbase_block_10000_total",
+          "interval": "",
+          "legendFormat": "{{address}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Etherbase Block Ratio 10k",
+      "tooltip": {
+        "shared": false,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": "10000",
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 5,
+      "fillGradient": 0,
+      "gridPos": {
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 25
       },
       "hiddenSeries": false,
       "id": 14,
@@ -531,10 +531,10 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 13,
+        "h": 18,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 34
       },
       "hiddenSeries": false,
       "id": 16,
@@ -620,7 +620,7 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -643,5 +643,5 @@
   "variables": {
     "list": []
   },
-  "version": 13
+  "version": 16
 }
