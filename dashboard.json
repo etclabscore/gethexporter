@@ -808,7 +808,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "geth_block_difficulty",
+          "expr": "geth_block_difficulty / 1e9",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -820,7 +820,101 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Block Difficulty",
+      "title": "Block Difficulty / 1e9",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "locale",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "Difficulty": "rgb(199, 70, 70)"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "hiddenSeries": false,
+      "id": 73,
+      "legend": {
+        "alignAsTable": false,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "(geth_block_difficulty / geth_block_delta_seconds) / 1e9",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "Hashrate e9",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Hashrate / 1e9",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -869,7 +963,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 19
       },
       "hiddenSeries": false,
       "id": 46,
@@ -959,7 +1053,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 25
       },
       "hiddenSeries": false,
       "id": 8,
@@ -1050,7 +1144,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 31
       },
       "hiddenSeries": false,
       "id": 38,
@@ -1137,7 +1231,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 37
       },
       "id": 44,
       "panels": [],
@@ -1158,7 +1252,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 5,
@@ -1267,10 +1361,192 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 49
+      },
+      "hiddenSeries": false,
+      "id": 75,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "geth_block_gas_used",
+          "interval": "",
+          "legendFormat": "block gas used",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Block Gas Used",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 55
+      },
+      "hiddenSeries": false,
+      "id": 53,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "geth_block_gas_spent / 1000000000",
+          "interval": "",
+          "legendFormat": "block gas spent",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Block Gas Spend",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 61
       },
       "hiddenSeries": false,
       "id": 52,
@@ -1365,10 +1641,10 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 50
+        "y": 68
       },
       "hiddenSeries": false,
-      "id": 53,
+      "id": 74,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1397,9 +1673,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "geth_block_gas_spent / 1000000000",
+          "expr": "geth_api_suggested_gas_price / 1000000000",
           "interval": "",
-          "legendFormat": "block gas spent",
+          "legendFormat": "api suggested gas price",
           "refId": "A"
         }
       ],
@@ -1407,7 +1683,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Block Gas Spend",
+      "title": "API Suggested Gas Price",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1456,7 +1732,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 56
+        "y": 74
       },
       "hiddenSeries": false,
       "id": 50,
@@ -1554,7 +1830,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 64
+        "y": 82
       },
       "hiddenSeries": false,
       "id": 57,
@@ -1640,10 +1916,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
-        "w": 8,
+        "h": 16,
+        "w": 6,
         "x": 0,
-        "y": 70
+        "y": 88
       },
       "hiddenSeries": false,
       "id": 69,
@@ -1733,10 +2009,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
-        "w": 8,
-        "x": 8,
-        "y": 70
+        "h": 16,
+        "w": 6,
+        "x": 6,
+        "y": 88
       },
       "hiddenSeries": false,
       "id": 70,
@@ -1826,10 +2102,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 16,
-        "y": 70
+        "h": 16,
+        "w": 6,
+        "x": 12,
+        "y": 88
       },
       "hiddenSeries": false,
       "id": 71,
@@ -1919,10 +2195,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 16,
-        "y": 76
+        "h": 16,
+        "w": 6,
+        "x": 18,
+        "y": 88
       },
       "hiddenSeries": false,
       "id": 72,
@@ -2010,7 +2286,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 82
+        "y": 104
       },
       "id": 55,
       "panels": [],
@@ -2024,7 +2300,7 @@
         "h": 2,
         "w": 2,
         "x": 0,
-        "y": 83
+        "y": 105
       },
       "id": 60,
       "links": [],
@@ -2089,7 +2365,7 @@
         "h": 2,
         "w": 2,
         "x": 2,
-        "y": 83
+        "y": 105
       },
       "id": 61,
       "links": [],
@@ -2159,7 +2435,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 85
+        "y": 107
       },
       "hiddenSeries": false,
       "id": 59,
@@ -2249,7 +2525,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 96
+        "y": 118
       },
       "hiddenSeries": false,
       "id": 63,
@@ -2339,7 +2615,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 106
+        "y": 128
       },
       "hiddenSeries": false,
       "id": 66,
@@ -2437,7 +2713,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 106
+        "y": 128
       },
       "hiddenSeries": false,
       "id": 67,
@@ -2536,7 +2812,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 116
+        "y": 138
       },
       "hiddenSeries": false,
       "id": 62,
@@ -2627,7 +2903,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 116
+        "y": 138
       },
       "hiddenSeries": false,
       "id": 64,
@@ -2712,7 +2988,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 127
+        "y": 149
       },
       "id": 42,
       "panels": [],
@@ -2762,5 +3038,5 @@
   "variables": {
     "list": []
   },
-  "version": 22
+  "version": 25
 }
