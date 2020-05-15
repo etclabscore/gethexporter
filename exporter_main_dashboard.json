@@ -619,7 +619,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 4,
-        "w": 13,
+        "w": 8,
         "x": 0,
         "y": 5
       },
@@ -710,8 +710,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 4,
-        "w": 11,
-        "x": 13,
+        "w": 8,
+        "x": 8,
         "y": 5
       },
       "hiddenSeries": false,
@@ -813,7 +813,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
@@ -834,7 +834,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
       "options": {
@@ -844,119 +844,45 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "Hashrate",
+          "fill": 3,
+          "linewidth": 0
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "geth_block_difficulty / 1e9",
+          "expr": "geth_block_difficulty / 1e9 / 1e3",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "Difficulty",
           "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Block Difficulty / 1e9",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "locale",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
         },
         {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {
-        "Difficulty": "rgb(199, 70, 70)"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 16
-      },
-      "hiddenSeries": false,
-      "id": 73,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "(geth_block_difficulty / geth_block_delta_seconds) / 1e9",
-          "format": "time_series",
+          "expr": "(geth_block_difficulty / geth_block_delta_seconds) / 1e9 / 1e3",
           "interval": "",
           "intervalFactor": 10,
-          "legendFormat": "Hashrate e9",
-          "refId": "A"
+          "legendFormat": "Hashrate",
+          "refId": "B"
+        },
+        {
+          "expr": "geth_block_delta_seconds",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "block time delta",
+          "refId": "C"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Hashrate / 1e9",
+      "title": "Difficulty | Hashrate (/1e12) | Block TimeDelta",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1005,7 +931,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 46,
@@ -1095,7 +1021,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 22
       },
       "hiddenSeries": false,
       "id": 8,
@@ -1175,105 +1101,13 @@
       }
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 34
-      },
-      "hiddenSeries": false,
-      "id": 38,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "geth_block_delta_seconds",
-          "format": "time_series",
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "sec",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Block Time Delta",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 28
       },
       "id": 44,
       "panels": [],
@@ -1294,7 +1128,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 29
       },
       "hiddenSeries": false,
       "id": 5,
@@ -1406,7 +1240,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 52
+        "y": 40
       },
       "hiddenSeries": false,
       "id": 75,
@@ -1497,7 +1331,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 58
+        "y": 46
       },
       "hiddenSeries": false,
       "id": 53,
@@ -1588,7 +1422,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 64
+        "y": 52
       },
       "hiddenSeries": false,
       "id": 52,
@@ -1612,7 +1446,13 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "gas price mean",
+          "dashes": true,
+          "lines": false
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -1683,7 +1523,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 71
+        "y": 59
       },
       "hiddenSeries": false,
       "id": 74,
@@ -1774,7 +1614,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 77
+        "y": 65
       },
       "hiddenSeries": false,
       "id": 50,
@@ -1872,7 +1712,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 85
+        "y": 73
       },
       "hiddenSeries": false,
       "id": 57,
@@ -1961,7 +1801,7 @@
         "h": 16,
         "w": 4,
         "x": 0,
-        "y": 91
+        "y": 79
       },
       "hiddenSeries": false,
       "id": 69,
@@ -2054,7 +1894,7 @@
         "h": 16,
         "w": 4,
         "x": 4,
-        "y": 91
+        "y": 79
       },
       "hiddenSeries": false,
       "id": 70,
@@ -2147,7 +1987,7 @@
         "h": 16,
         "w": 4,
         "x": 8,
-        "y": 91
+        "y": 79
       },
       "hiddenSeries": false,
       "id": 71,
@@ -2240,7 +2080,7 @@
         "h": 16,
         "w": 4,
         "x": 12,
-        "y": 91
+        "y": 79
       },
       "hiddenSeries": false,
       "id": 72,
@@ -2333,7 +2173,7 @@
         "h": 16,
         "w": 4,
         "x": 16,
-        "y": 91
+        "y": 79
       },
       "hiddenSeries": false,
       "id": 67,
@@ -2426,7 +2266,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 107
+        "y": 95
       },
       "id": 42,
       "panels": [],
@@ -2476,5 +2316,5 @@
   "variables": {
     "list": []
   },
-  "version": 36
+  "version": 38
 }
