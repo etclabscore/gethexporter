@@ -1611,8 +1611,8 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 24,
+        "h": 7,
+        "w": 12,
         "x": 0,
         "y": 65
       },
@@ -1709,10 +1709,108 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 65
+      },
+      "hiddenSeries": false,
+      "id": 76,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": true,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 3,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "expr": "geth_block_transaction_nonce_median < 1000",
+          "interval": "",
+          "legendFormat": "tx nonce med",
+          "refId": "A"
+        },
+        {
+          "expr": "geth_block_transaction_nonce_mean < 1000",
+          "interval": "",
+          "legendFormat": "tx nonce mean",
+          "refId": "B"
+        },
+        {
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Transaction Nonces < 1000",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 2,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 73
+        "y": 72
       },
       "hiddenSeries": false,
       "id": 57,
@@ -1801,7 +1899,7 @@
         "h": 16,
         "w": 4,
         "x": 0,
-        "y": 79
+        "y": 78
       },
       "hiddenSeries": false,
       "id": 69,
@@ -1894,7 +1992,7 @@
         "h": 16,
         "w": 4,
         "x": 4,
-        "y": 79
+        "y": 78
       },
       "hiddenSeries": false,
       "id": 70,
@@ -1987,7 +2085,7 @@
         "h": 16,
         "w": 4,
         "x": 8,
-        "y": 79
+        "y": 78
       },
       "hiddenSeries": false,
       "id": 71,
@@ -2080,7 +2178,7 @@
         "h": 16,
         "w": 4,
         "x": 12,
-        "y": 79
+        "y": 78
       },
       "hiddenSeries": false,
       "id": 72,
@@ -2173,7 +2271,7 @@
         "h": 16,
         "w": 4,
         "x": 16,
-        "y": 79
+        "y": 78
       },
       "hiddenSeries": false,
       "id": 67,
@@ -2266,7 +2364,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 95
+        "y": 94
       },
       "id": 42,
       "panels": [],
@@ -2316,5 +2414,5 @@
   "variables": {
     "list": []
   },
-  "version": 38
+  "version": 39
 }
