@@ -794,7 +794,7 @@
     },
     {
       "aliasColors": {},
-      "bars": true,
+      "bars": false,
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
@@ -818,7 +818,7 @@
         "total": false,
         "values": false
       },
-      "lines": false,
+      "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
@@ -831,7 +831,7 @@
       "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
-      "steppedLine": false,
+      "steppedLine": true,
       "targets": [
         {
           "expr": "avg(geth_block_difficulty / geth_block_delta_seconds)",
@@ -1966,7 +1966,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "ETH Value Transferred",
+      "title": "ETH Value Transferred Total",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2005,6 +2005,245 @@
     },
     {
       "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 19,
+        "x": 0,
+        "y": 58
+      },
+      "hiddenSeries": false,
+      "id": 84,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "geth_block_transactions_value_max",
+          "interval": "",
+          "legendFormat": "max",
+          "refId": "A"
+        },
+        {
+          "expr": "geth_block_transactions_value_min",
+          "interval": "",
+          "legendFormat": "min",
+          "refId": "B"
+        },
+        {
+          "expr": "geth_block_transactions_value_mean",
+          "interval": "",
+          "legendFormat": "mean",
+          "refId": "C"
+        },
+        {
+          "expr": "geth_block_transactions_value_median",
+          "interval": "",
+          "legendFormat": "median",
+          "refId": "D"
+        },
+        {
+          "expr": "avg_over_time(geth_block_transactions_value_median[60m])",
+          "interval": "",
+          "legendFormat": "avg median 60m",
+          "refId": "E"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "ETH Value Transfer Stats",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 19,
+        "y": 58
+      },
+      "id": 86,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "defaults": {
+            "mappings": [
+              {
+                "id": 0,
+                "op": "=",
+                "text": "N/A",
+                "type": 1,
+                "value": "null"
+              }
+            ],
+            "nullValueMode": "connected",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "title": "ETH",
+            "unit": "none"
+          },
+          "overrides": [],
+          "values": false
+        },
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal"
+      },
+      "pluginVersion": "6.7.3",
+      "targets": [
+        {
+          "expr": "geth_block_transactions_value_median",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Last Tx ETH Median",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 19,
+        "y": 61
+      },
+      "id": 87,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "defaults": {
+            "mappings": [
+              {
+                "id": 0,
+                "op": "=",
+                "text": "N/A",
+                "type": 1,
+                "value": "null"
+              }
+            ],
+            "nullValueMode": "connected",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "title": "ETH",
+            "unit": "none"
+          },
+          "overrides": [],
+          "values": false
+        },
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal"
+      },
+      "pluginVersion": "6.7.3",
+      "targets": [
+        {
+          "expr": "avg_over_time(geth_block_transactions_value_median[60m])",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "60m Tx ETH Median",
+      "type": "stat"
+    },
+    {
+      "aliasColors": {},
       "bars": true,
       "dashLength": 10,
       "dashes": false,
@@ -2015,7 +2254,7 @@
         "h": 4,
         "w": 12,
         "x": 0,
-        "y": 58
+        "y": 64
       },
       "hiddenSeries": false,
       "id": 50,
@@ -2113,7 +2352,7 @@
         "h": 4,
         "w": 12,
         "x": 12,
-        "y": 58
+        "y": 64
       },
       "hiddenSeries": false,
       "id": 76,
@@ -2211,7 +2450,7 @@
         "h": 10,
         "w": 4,
         "x": 0,
-        "y": 62
+        "y": 68
       },
       "hiddenSeries": false,
       "id": 69,
@@ -2304,7 +2543,7 @@
         "h": 10,
         "w": 4,
         "x": 4,
-        "y": 62
+        "y": 68
       },
       "hiddenSeries": false,
       "id": 70,
@@ -2397,7 +2636,7 @@
         "h": 10,
         "w": 4,
         "x": 8,
-        "y": 62
+        "y": 68
       },
       "hiddenSeries": false,
       "id": 71,
@@ -2490,7 +2729,7 @@
         "h": 10,
         "w": 4,
         "x": 12,
-        "y": 62
+        "y": 68
       },
       "hiddenSeries": false,
       "id": 72,
@@ -2583,7 +2822,7 @@
         "h": 10,
         "w": 4,
         "x": 16,
-        "y": 62
+        "y": 68
       },
       "hiddenSeries": false,
       "id": 67,
@@ -2676,7 +2915,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 72
+        "y": 78
       },
       "id": 42,
       "panels": [],
@@ -2692,7 +2931,7 @@
     "list": []
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {
@@ -2726,5 +2965,5 @@
   "variables": {
     "list": []
   },
-  "version": 2
+  "version": 7
 }
