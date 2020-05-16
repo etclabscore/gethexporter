@@ -86,6 +86,7 @@ type GethInfo struct {
 	GasSpent               *big.Int
 	GasPriceMean           *big.Int
 	GasPriceMedian         *big.Int
+	GasPriceMin            *big.Int
 	TransactionNonceMean   uint64
 	TransactionNonceMedian uint64
 	BlockTimeDelta         uint64
@@ -147,8 +148,11 @@ func CalculateBlockTotals(block *types.Block) {
 	geth.EthTransfers = 0
 
 	geth.GasSpent = big.NewInt(0)
+
 	geth.GasPriceMean = big.NewInt(0)
 	geth.GasPriceMedian = big.NewInt(0)
+	geth.GasPriceMin = big.NewInt(-1)
+
 	gasPriceSum := big.NewInt(0)
 	gasPrices := []*big.Int{}
 
@@ -156,6 +160,7 @@ func CalculateBlockTotals(block *types.Block) {
 	geth.TransactionNonceMean = 0
 	txNonceSum := uint64(0)
 	txNonces := []uint64{}
+
 
 	for _, b := range block.Transactions() {
 
@@ -179,6 +184,10 @@ func CalculateBlockTotals(block *types.Block) {
 		geth.GasSpent.Add(geth.GasSpent, new(big.Int).Mul(b.GasPrice(), new(big.Int).SetUint64(b.Gas())))
 		gasPriceSum.Add(gasPriceSum, b.GasPrice())
 		gasPrices = append(gasPrices, b.GasPrice())
+
+		if geth.GasPriceMin.Sign() < 0 || b.GasPrice().Cmp(geth.GasPriceMin) < 0 {
+			geth.GasPriceMin.Set(b.GasPrice())
+		}
 
 		txNonces = append(txNonces, b.Nonce())
 		txNonceSum += b.Nonce()
@@ -382,6 +391,7 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_spent %v", geth.GasSpent))
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_price_mean %v", geth.GasPriceMean))
 	allOut = append(allOut, fmt.Sprintf("geth_block_gas_price_median %v", geth.GasPriceMedian))
+	allOut = append(allOut, fmt.Sprintf("geth_block_gas_price_min %v", geth.GasPriceMin))
 
 	allOut = append(allOut, fmt.Sprintf("geth_block_transaction_nonce_mean %v", geth.TransactionNonceMean))
 	allOut = append(allOut, fmt.Sprintf("geth_block_transaction_nonce_median %v", geth.TransactionNonceMedian))
