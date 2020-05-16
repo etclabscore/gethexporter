@@ -651,10 +651,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "geth_block_number",
+          "expr": "rate(geth_block_number[10m])",
           "instant": false,
           "interval": "",
-          "legendFormat": "n",
+          "legendFormat": "rate",
           "refId": "A"
         }
       ],
@@ -662,7 +662,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Block Height",
+      "title": "Block Height Rate",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -684,7 +684,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": false
+          "show": true
         },
         {
           "format": "short",
@@ -692,7 +692,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -2726,5 +2726,5 @@
   "variables": {
     "list": []
   },
-  "version": 3
+  "version": 2
 }
