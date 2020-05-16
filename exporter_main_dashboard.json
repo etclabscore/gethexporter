@@ -1522,7 +1522,14 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "transaction count avg 60m",
+          "color": "#8F3BB8",
+          "linewidth": 3,
+          "steppedLine": false
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": true,
@@ -1553,6 +1560,13 @@
           "interval": "",
           "legendFormat": "value transfers",
           "refId": "D"
+        },
+        {
+          "expr": "avg_over_time(geth_block_transactions_count[60m])",
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "transaction count avg 60m",
+          "refId": "E"
         }
       ],
       "thresholds": [],
