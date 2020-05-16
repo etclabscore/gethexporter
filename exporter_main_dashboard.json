@@ -872,6 +872,98 @@
       "yBucketSize": null
     },
     {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "hiddenSeries": false,
+      "id": 80,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "geth_block_etherbase",
+          "format": "time_series",
+          "interval": "",
+          "legendFormat": "{{address}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Etherbases",
+      "tooltip": {
+        "shared": false,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "aliasColors": {
         "Difficulty": "rgb(199, 70, 70)"
       },
@@ -885,7 +977,7 @@
         "h": 4,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 18,
@@ -998,7 +1090,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 20
       },
       "hiddenSeries": false,
       "id": 46,
@@ -1088,7 +1180,7 @@
         "h": 5,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 20
       },
       "hiddenSeries": false,
       "id": 8,
@@ -1175,7 +1267,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 25
       },
       "id": 44,
       "panels": [],
@@ -1196,7 +1288,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 26
       },
       "hiddenSeries": false,
       "id": 5,
@@ -1308,7 +1400,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 33
       },
       "hiddenSeries": false,
       "id": 52,
@@ -1422,7 +1514,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 75,
@@ -1520,7 +1612,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 43
       },
       "hiddenSeries": false,
       "id": 57,
@@ -1609,7 +1701,7 @@
         "h": 4,
         "w": 12,
         "x": 0,
-        "y": 44
+        "y": 48
       },
       "hiddenSeries": false,
       "id": 50,
@@ -1707,7 +1799,7 @@
         "h": 4,
         "w": 12,
         "x": 12,
-        "y": 44
+        "y": 48
       },
       "hiddenSeries": false,
       "id": 76,
@@ -1805,7 +1897,7 @@
         "h": 10,
         "w": 4,
         "x": 0,
-        "y": 48
+        "y": 52
       },
       "hiddenSeries": false,
       "id": 69,
@@ -1898,7 +1990,7 @@
         "h": 10,
         "w": 4,
         "x": 4,
-        "y": 48
+        "y": 52
       },
       "hiddenSeries": false,
       "id": 70,
@@ -1991,7 +2083,7 @@
         "h": 10,
         "w": 4,
         "x": 8,
-        "y": 48
+        "y": 52
       },
       "hiddenSeries": false,
       "id": 71,
@@ -2084,7 +2176,7 @@
         "h": 10,
         "w": 4,
         "x": 12,
-        "y": 48
+        "y": 52
       },
       "hiddenSeries": false,
       "id": 72,
@@ -2177,7 +2269,7 @@
         "h": 10,
         "w": 4,
         "x": 16,
-        "y": 48
+        "y": 52
       },
       "hiddenSeries": false,
       "id": 67,
@@ -2270,7 +2362,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 58
+        "y": 62
       },
       "id": 42,
       "panels": [],
@@ -2320,5 +2412,5 @@
   "variables": {
     "list": []
   },
-  "version": 3
+  "version": 5
 }
