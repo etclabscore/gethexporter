@@ -545,7 +545,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 3,
+        "w": 4,
         "x": 15,
         "y": 1
       },
@@ -684,7 +684,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         },
         {
           "format": "short",
@@ -710,7 +710,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 3,
-        "w": 13,
+        "w": 9,
         "x": 6,
         "y": 4
       },
@@ -770,11 +770,105 @@
       },
       "yaxes": [
         {
+          "decimals": 0,
           "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
           "min": "0",
+          "show": false
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 3,
+        "w": 9,
+        "x": 15,
+        "y": 4
+      },
+      "hiddenSeries": false,
+      "id": 82,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg(geth_block_difficulty / geth_block_delta_seconds)",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "hashrate",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Hashrate 1:10",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         },
         {
@@ -806,70 +900,104 @@
       "type": "row"
     },
     {
-      "cards": {
-        "cardPadding": null,
-        "cardRound": null
-      },
-      "color": {
-        "cardColor": "#E02F44",
-        "colorScale": "sqrt",
-        "colorScheme": "interpolateCividis",
-        "exponent": 0.5,
-        "mode": "spectrum"
-      },
-      "dataFormat": "tsbuckets",
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
       "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 24,
         "x": 0,
         "y": 8
       },
-      "heatmap": {},
-      "hideZeroBuckets": false,
-      "highlightCards": true,
-      "id": 78,
+      "hiddenSeries": false,
+      "id": 81,
       "legend": {
-        "show": true
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": false
       },
-      "reverseYBuckets": false,
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
       "targets": [
         {
-          "expr": "(geth_block_difficulty / geth_block_delta_seconds)",
-          "format": "heatmap",
+          "expr": "rate(geth_block_uncles_count[10m])",
           "instant": false,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "hashrate",
+          "intervalFactor": 10,
+          "legendFormat": "rate block uncles 10m",
           "refId": "A"
+        },
+        {
+          "expr": "rate(geth_block_uncles_count[100m])",
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "rate block uncles 100m",
+          "refId": "B"
         }
       ],
+      "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
-      "title": "Hashrate Heat",
+      "title": "Block Uncles Rate",
       "tooltip": {
-        "show": true,
-        "showHistogram": false
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
       },
       "transparent": true,
-      "type": "heatmap",
-      "xAxis": {
-        "show": true
-      },
-      "xBucketNumber": null,
-      "xBucketSize": null,
-      "yAxis": {
-        "decimals": null,
-        "format": "short",
-        "logBase": 1,
-        "max": null,
-        "min": null,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
         "show": true,
-        "splitFactor": null
+        "values": []
       },
-      "yBucketBound": "auto",
-      "yBucketNumber": null,
-      "yBucketSize": null
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     },
     {
       "aliasColors": {},
@@ -883,7 +1011,7 @@
         "h": 4,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 13
       },
       "hiddenSeries": false,
       "id": 80,
@@ -964,6 +1092,72 @@
       }
     },
     {
+      "cards": {
+        "cardPadding": null,
+        "cardRound": null
+      },
+      "color": {
+        "cardColor": "#E02F44",
+        "colorScale": "sqrt",
+        "colorScheme": "interpolateCividis",
+        "exponent": 0.5,
+        "mode": "spectrum"
+      },
+      "dataFormat": "tsbuckets",
+      "datasource": null,
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "heatmap": {},
+      "hideZeroBuckets": false,
+      "highlightCards": true,
+      "id": 78,
+      "legend": {
+        "show": true
+      },
+      "reverseYBuckets": false,
+      "targets": [
+        {
+          "expr": "(geth_block_difficulty / geth_block_delta_seconds)",
+          "format": "heatmap",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "hashrate",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Hashrate Heat",
+      "tooltip": {
+        "show": true,
+        "showHistogram": false
+      },
+      "transparent": true,
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "xBucketNumber": null,
+      "xBucketSize": null,
+      "yAxis": {
+        "decimals": null,
+        "format": "short",
+        "logBase": 1,
+        "max": null,
+        "min": null,
+        "show": true,
+        "splitFactor": null
+      },
+      "yBucketBound": "auto",
+      "yBucketNumber": null,
+      "yBucketSize": null
+    },
+    {
       "aliasColors": {
         "Difficulty": "rgb(199, 70, 70)"
       },
@@ -977,7 +1171,7 @@
         "h": 4,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 21
       },
       "hiddenSeries": false,
       "id": 18,
@@ -1090,7 +1284,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 20
+        "y": 25
       },
       "hiddenSeries": false,
       "id": 46,
@@ -1180,7 +1374,7 @@
         "h": 5,
         "w": 12,
         "x": 12,
-        "y": 20
+        "y": 25
       },
       "hiddenSeries": false,
       "id": 8,
@@ -1267,7 +1461,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 30
       },
       "id": 44,
       "panels": [],
@@ -1288,7 +1482,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 31
       },
       "hiddenSeries": false,
       "id": 5,
@@ -1400,7 +1594,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 52,
@@ -1514,7 +1708,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 43
       },
       "hiddenSeries": false,
       "id": 75,
@@ -1612,7 +1806,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 48
       },
       "hiddenSeries": false,
       "id": 57,
@@ -1701,7 +1895,7 @@
         "h": 4,
         "w": 12,
         "x": 0,
-        "y": 48
+        "y": 53
       },
       "hiddenSeries": false,
       "id": 50,
@@ -1799,7 +1993,7 @@
         "h": 4,
         "w": 12,
         "x": 12,
-        "y": 48
+        "y": 53
       },
       "hiddenSeries": false,
       "id": 76,
@@ -1897,7 +2091,7 @@
         "h": 10,
         "w": 4,
         "x": 0,
-        "y": 52
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 69,
@@ -1990,7 +2184,7 @@
         "h": 10,
         "w": 4,
         "x": 4,
-        "y": 52
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 70,
@@ -2083,7 +2277,7 @@
         "h": 10,
         "w": 4,
         "x": 8,
-        "y": 52
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 71,
@@ -2176,7 +2370,7 @@
         "h": 10,
         "w": 4,
         "x": 12,
-        "y": 52
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 72,
@@ -2269,7 +2463,7 @@
         "h": 10,
         "w": 4,
         "x": 16,
-        "y": 52
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 67,
@@ -2362,7 +2556,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 67
       },
       "id": 42,
       "panels": [],
@@ -2412,5 +2606,5 @@
   "variables": {
     "list": []
   },
-  "version": 5
+  "version": 7
 }
