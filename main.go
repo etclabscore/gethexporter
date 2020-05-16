@@ -41,6 +41,7 @@ var (
 
 	//etherbaseBlockTimeDeltaCache = cache.New(15*24*time.Hour, 10*time.Minute)
 	etherbaseCounts = cache.New(15*24*time.Hour, 10*time.Minute)
+	etherbaseWinStreaking []common.Address
 
 	etherbaseBlocks10   map[common.Address]int
 	etherbaseBlocks100   map[common.Address]int
@@ -346,6 +347,12 @@ func Routine() {
 				etherbaseCounts.SetDefault(etherbaseStr, 1)
 			}
 
+			if len(etherbaseWinStreaking) == 0 || etherbaseWinStreaking[0] != geth.CurrentBlock.Coinbase() {
+				etherbaseWinStreaking = []common.Address{geth.CurrentBlock.Coinbase()}
+			} else {
+				etherbaseWinStreaking = append(etherbaseWinStreaking, geth.CurrentBlock.Coinbase())
+			}
+
 			its := etherbaseCounts.Items()
 			etherbaseBalanceM = make(map[string]*big.Int, len(its))
 			for k := range its {
@@ -438,9 +445,13 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 		allOut = append(allOut, fmt.Sprintf("geth_address_balance{address=\"%v\"} %v", v.Address, ToEther(v.Balance).String()))
 		allOut = append(allOut, fmt.Sprintf("geth_address_nonce{address=\"%v\"} %v", v.Address, v.Nonce))
 	}
-	
+
 	for k, v := range etherbaseCounts.Items() {
 		allOut = append(allOut, fmt.Sprintf("geth_etherbase_count{address=\"%s\"} %v", k, v.Object.(int)))
+	}
+
+	if len(etherbaseWinStreaking) > 0 {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_streak{\"%s\"} %d", etherbaseWinStreaking[0].Hex(), len(etherbaseWinStreaking)))
 	}
 
 	for k, v := range etherbaseBlocks10 {
