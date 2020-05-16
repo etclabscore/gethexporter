@@ -42,6 +42,7 @@ var (
 	//etherbaseBlockTimeDeltaCache = cache.New(15*24*time.Hour, 10*time.Minute)
 	etherbaseBalances = cache.New(15*24*time.Hour, 10*time.Minute)
 
+	etherbaseBlocks10   map[common.Address]int
 	etherbaseBlocks100   map[common.Address]int
 	etherbaseBlocks1000  map[common.Address]int
 	etherbaseBlocks10000 map[common.Address]int
@@ -236,6 +237,7 @@ func calculateEtherbaseCounters(block, lastBlock *types.Block) {
 	// push front
 	etherbaseTransactionsSl = append([]etherbaseTransactionsT{{base: addr, nTxs: txLen}}, etherbaseTransactionsSl...)
 
+	etherbaseBlocks10 = make(map[common.Address]int, 10)
 	etherbaseBlocks100 = make(map[common.Address]int, 100)
 	etherbaseBlocks1000 = make(map[common.Address]int, 1000)
 	etherbaseBlocks10000 = make(map[common.Address]int, 10000)
@@ -245,6 +247,13 @@ func calculateEtherbaseCounters(block, lastBlock *types.Block) {
 	etherbaseTransactions10000 = make(map[common.Address]int, 10000)
 
 	for i, v := range etherbaseBlocksSl {
+		if i <= 10-1 {
+			if _, ok := etherbaseBlocks10[v]; !ok {
+				etherbaseBlocks10[v] = 1
+			} else {
+				etherbaseBlocks10[v]++
+			}
+		}
 		if i <= 100-1 {
 			if _, ok := etherbaseBlocks100[v]; !ok {
 				etherbaseBlocks100[v] = 1
@@ -423,6 +432,9 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 		allOut = append(allOut, fmt.Sprintf("geth_address_nonce{address=\"%v\"} %v", v.Address, v.Nonce))
 	}
 
+	for k, v := range etherbaseBlocks10 {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_10_total{address=\"%s\"} %v", k.Hex(), v))
+	}
 	for k, v := range etherbaseBlocks100 {
 		allOut = append(allOut, fmt.Sprintf("geth_etherbase_block_100_total{address=\"%s\"} %v", k.Hex(), v))
 	}
