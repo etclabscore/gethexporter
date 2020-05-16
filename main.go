@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/ethereum/go-ethereum"
@@ -41,10 +42,10 @@ var (
 	//etherbaseTransactionsRatio map[common.Address]float64
 
 	//etherbaseBlockTimeDeltaCache = cache.New(15*24*time.Hour, 10*time.Minute)
-	etherbaseCounts = cache.New(15*24*time.Hour, 10*time.Minute)
+	etherbaseCounts       = cache.New(15*24*time.Hour, 10*time.Minute)
 	etherbaseWinStreaking []common.Address
 
-	etherbaseBlocks10   map[common.Address]int
+	etherbaseBlocks10    map[common.Address]int
 	etherbaseBlocks100   map[common.Address]int
 	etherbaseBlocks1000  map[common.Address]int
 	etherbaseBlocks10000 map[common.Address]int
@@ -52,6 +53,8 @@ var (
 	etherbaseTransactions100   map[common.Address]int
 	etherbaseTransactions1000  map[common.Address]int
 	etherbaseTransactions10000 map[common.Address]int
+
+	mu = new(sync.Mutex)
 )
 
 var etherbaseBlocksSl = []common.Address{}
@@ -79,10 +82,10 @@ type GethInfo struct {
 	BlockSize              float64
 	LoadTime               float64
 	TotalEthTransferred    *big.Int
-	MaxEthTransferred *big.Int
-	MinEthTransferred *big.Int
-	MedEthTransferred *big.Int
-	MeanEthTransferred *big.Int
+	MaxEthTransferred      *big.Int
+	MinEthTransferred      *big.Int
+	MedEthTransferred      *big.Int
+	MeanEthTransferred     *big.Int
 	CurrentBlock           *types.Block
 	Sync                   *ethereum.SyncProgress
 	LastBlockUpdate        time.Time
@@ -175,7 +178,6 @@ func CalculateBlockTotals(block *types.Block) {
 	txNonceSum := uint64(0)
 	txNonces := []uint64{}
 
-
 	for _, b := range block.Transactions() {
 
 		if b.To() == nil {
@@ -250,6 +252,7 @@ func CalculateBlockTotals(block *types.Block) {
 }
 
 func calculateEtherbaseCounters(block, lastBlock *types.Block) {
+
 	blockCount++
 
 	txLen := block.Transactions().Len()
@@ -270,6 +273,9 @@ func calculateEtherbaseCounters(block, lastBlock *types.Block) {
 	}
 	// push front
 	etherbaseTransactionsSl = append([]etherbaseTransactionsT{{base: addr, nTxs: txLen}}, etherbaseTransactionsSl...)
+
+	mu.Lock()
+	defer mu.Unlock()
 
 	etherbaseBlocks10 = make(map[common.Address]int, 10)
 	etherbaseBlocks100 = make(map[common.Address]int, 100)
@@ -334,85 +340,89 @@ func calculateEtherbaseCounters(block, lastBlock *types.Block) {
 			}
 		}
 	}
+}
 
-	// todo
-	//if lastBlock != nil {
-	//	etherbaseBlockTimeDeltaCache.SetDefault(addr.Hex(), block.Time() - lastBlock.Time())
-	//}
+func loop(ctx context.Context, lastBlock *types.Block) {
+	t1 := time.Now()
+
+	var err error
+	geth.CurrentBlock, err = eth.BlockByNumber(ctx, nil)
+	if err != nil {
+		log.Printf("issue with reponse from geth server: %v\n", geth.CurrentBlock)
+		return
+	}
+	geth.SugGasPrice, _ = eth.SuggestGasPrice(ctx)
+	geth.PendingTx, _ = eth.PendingTransactionCount(ctx)
+	geth.NetworkId, _ = eth.NetworkID(ctx)
+	geth.ChainId, _ = eth.ChainID(ctx)
+	geth.Sync, _ = eth.SyncProgress(ctx)
+
+	if lastBlock == nil || geth.CurrentBlock.NumberU64() > lastBlock.NumberU64() {
+		log.Printf("Received block #%v with %v transactions (%v)\n", geth.CurrentBlock.NumberU64(), len(geth.CurrentBlock.Transactions()), geth.CurrentBlock.Hash().String())
+
+		geth.LastBlockUpdate = time.Now()
+		geth.LoadTime = time.Now().Sub(t1).Seconds()
+		if lastBlock != nil {
+			geth.BlockTimeDelta = geth.CurrentBlock.Time() - lastBlock.Time()
+		}
+
+		calculateEtherbaseCounters(geth.CurrentBlock, lastBlock)
+
+		// Update the winning etherbase in the ttl map
+		etherbaseStr := geth.CurrentBlock.Coinbase().Hex()
+
+		// Increment etherbase win tallies
+		if it, ok := etherbaseCounts.Get(etherbaseStr); ok {
+			etherbaseCounts.SetDefault(etherbaseStr, it.(int)+1)
+		} else {
+			etherbaseCounts.SetDefault(etherbaseStr, 1)
+		}
+
+		if len(etherbaseWinStreaking) == 0 || etherbaseWinStreaking[0] != geth.CurrentBlock.Coinbase() {
+			etherbaseWinStreaking = []common.Address{geth.CurrentBlock.Coinbase()}
+		} else {
+			etherbaseWinStreaking = append(etherbaseWinStreaking, geth.CurrentBlock.Coinbase())
+		}
+
+		its := etherbaseCounts.Items()
+		mu.Lock()
+		etherbaseBalanceM = make(map[string]*big.Int, len(its))
+		mu.Unlock()
+		for k := range its {
+			b, err := eth.BalanceAt(ctx, common.HexToAddress(k), geth.CurrentBlock.Number())
+			if err == nil {
+				mu.Lock()
+				etherbaseBalanceM[k] = b
+				mu.Unlock()
+			}
+		}
+	}
+
+	if watchingAddresses != "" {
+		for _, a := range strings.Split(watchingAddresses, ",") {
+			addr := common.HexToAddress(a)
+			balance, _ := eth.BalanceAt(ctx, addr, geth.CurrentBlock.Number())
+			nonce, _ := eth.NonceAt(ctx, addr, geth.CurrentBlock.Number())
+			address := Address{
+				Address: addr.String(),
+				Balance: balance,
+				Nonce:   nonce,
+			}
+			mu.Lock()
+			addresses[a] = address
+			mu.Unlock()
+		}
+	}
+
 }
 
 func Routine() {
 	var lastBlock *types.Block
 	ctx := context.Background()
 	for {
-		t1 := time.Now()
-		var err error
-		geth.CurrentBlock, err = eth.BlockByNumber(ctx, nil)
-		if err != nil {
-			log.Printf("issue with reponse from geth server: %v\n", geth.CurrentBlock)
-			time.Sleep(time.Duration(delay) * time.Millisecond)
-			continue
-		}
-		geth.SugGasPrice, _ = eth.SuggestGasPrice(ctx)
-		geth.PendingTx, _ = eth.PendingTransactionCount(ctx)
-		geth.NetworkId, _ = eth.NetworkID(ctx)
-		geth.ChainId, _ = eth.ChainID(ctx)
-		geth.Sync, _ = eth.SyncProgress(ctx)
-
-		if lastBlock == nil || geth.CurrentBlock.NumberU64() > lastBlock.NumberU64() {
-			log.Printf("Received block #%v with %v transactions (%v)\n", geth.CurrentBlock.NumberU64(), len(geth.CurrentBlock.Transactions()), geth.CurrentBlock.Hash().String())
-
-			geth.LastBlockUpdate = time.Now()
-			geth.LoadTime = time.Now().Sub(t1).Seconds()
-			if lastBlock != nil {
-				geth.BlockTimeDelta = geth.CurrentBlock.Time() - lastBlock.Time()
-			}
-
-			calculateEtherbaseCounters(geth.CurrentBlock, lastBlock)
-
-			// Update the winning etherbase in the ttl map
-			etherbaseStr := geth.CurrentBlock.Coinbase().Hex()
-
-			// Increment etherbase win tallies
-			if it, ok := etherbaseCounts.Get(etherbaseStr); ok {
-				etherbaseCounts.SetDefault(etherbaseStr, it.(int)+1)
-			} else {
-				etherbaseCounts.SetDefault(etherbaseStr, 1)
-			}
-
-			if len(etherbaseWinStreaking) == 0 || etherbaseWinStreaking[0] != geth.CurrentBlock.Coinbase() {
-				etherbaseWinStreaking = []common.Address{geth.CurrentBlock.Coinbase()}
-			} else {
-				etherbaseWinStreaking = append(etherbaseWinStreaking, geth.CurrentBlock.Coinbase())
-			}
-
-			its := etherbaseCounts.Items()
-			etherbaseBalanceM = make(map[string]*big.Int, len(its))
-			for k := range its {
-				b, err := eth.BalanceAt(ctx, common.HexToAddress(k), geth.CurrentBlock.Number())
-				if err == nil {
-					etherbaseBalanceM[k] = b
-				}
-			}
-		}
-
-		if watchingAddresses != "" {
-			for _, a := range strings.Split(watchingAddresses, ",") {
-				addr := common.HexToAddress(a)
-				balance, _ := eth.BalanceAt(ctx, addr, geth.CurrentBlock.Number())
-				nonce, _ := eth.NonceAt(ctx, addr, geth.CurrentBlock.Number())
-				address := Address{
-					Address: addr.String(),
-					Balance: balance,
-					Nonce:   nonce,
-				}
-				addresses[a] = address
-			}
-		}
-
+		loop(ctx, lastBlock)
 		lastBlock = geth.CurrentBlock
 		time.Sleep(time.Duration(delay) * time.Millisecond)
-
 	}
 }
 
@@ -427,6 +437,7 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("issue receiving block from URL: %v", geth.GethServer)))
 		return
 	}
+
 	CalculateBlockTotals(block)
 
 	allOut = append(allOut, fmt.Sprintf("geth_block_number %v", block.NumberU64()))
@@ -480,6 +491,7 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	allOut = append(allOut, fmt.Sprintf("geth_blocks_total %v", blockCount))
 	allOut = append(allOut, fmt.Sprintf("geth_transactions_total %v", transactionCount))
 
+	mu.Lock()
 	for _, v := range addresses {
 		allOut = append(allOut, fmt.Sprintf("geth_address_balance{address=\"%v\"} %v", v.Address, ToEther(v.Balance).String()))
 		allOut = append(allOut, fmt.Sprintf("geth_address_nonce{address=\"%v\"} %v", v.Address, v.Nonce))
@@ -519,6 +531,7 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	for k, v := range etherbaseBalanceM {
 		allOut = append(allOut, fmt.Sprintf("geth_etherbase_balance{address=\"%s\"} %v", k, ToEther(v)))
 	}
+	mu.Unlock()
 
 	w.Write([]byte(strings.Join(allOut, "\n")))
 }
