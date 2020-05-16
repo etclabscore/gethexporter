@@ -531,6 +531,111 @@
         "y": 25
       },
       "hiddenSeries": false,
+      "id": 24,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": false,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 0,
+      "nullPointMode": "null as zero",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "half",
+          "color": "#C4162A",
+          "fill": 0,
+          "linewidth": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "max(geth_etherbase_block_10_total)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "max etherbase ratio",
+          "refId": "A"
+        },
+        {
+          "expr": "5",
+          "interval": "",
+          "legendFormat": "half",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "max(geth_etherbase_block_10_total)",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": "10",
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 5,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
+      "hiddenSeries": false,
       "id": 22,
       "legend": {
         "alignAsTable": true,
@@ -618,7 +723,7 @@
         "h": 11,
         "w": 11,
         "x": 0,
-        "y": 31
+        "y": 37
       },
       "hiddenSeries": false,
       "id": 8,
@@ -661,7 +766,7 @@
       "timeShift": null,
       "title": "Etherbase Block Ratio 1k",
       "tooltip": {
-        "shared": false,
+        "shared": true,
         "sort": 2,
         "value_type": "individual"
       },
@@ -708,7 +813,7 @@
         "h": 22,
         "w": 13,
         "x": 11,
-        "y": 31
+        "y": 37
       },
       "hiddenSeries": false,
       "id": 12,
@@ -751,8 +856,8 @@
       "timeShift": null,
       "title": "Etherbase Block Ratio 100",
       "tooltip": {
-        "shared": false,
-        "sort": 0,
+        "shared": true,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -798,7 +903,7 @@
         "h": 11,
         "w": 11,
         "x": 0,
-        "y": 42
+        "y": 48
       },
       "hiddenSeries": false,
       "id": 6,
@@ -888,7 +993,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 53
+        "y": 59
       },
       "hiddenSeries": false,
       "id": 14,
@@ -978,7 +1083,7 @@
         "h": 18,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 68
       },
       "hiddenSeries": false,
       "id": 16,
@@ -1088,5 +1193,5 @@
   "variables": {
     "list": []
   },
-  "version": 5
+  "version": 6
 }
