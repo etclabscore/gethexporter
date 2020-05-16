@@ -31,10 +31,14 @@ var (
 	geth              *GethInfo
 	delay             int
 	watchingAddresses string
-	blockCount        int
-	transactionCount  int
-	addresses         map[string]Address
-	etherbaseBalanceM map[string]*big.Int
+
+	started time.Time
+
+	blockCount            int64
+	blockCountConsecutive int64
+	transactionCount      int64
+	addresses             map[string]Address
+	etherbaseBalanceM     map[string]*big.Int
 	//etherbaseBlocks            map[common.Address]int
 	//etherbaseBlocksRatio       map[common.Address]float64
 	//etherbaseBlockTimeDeltaMS  map[common.Address]uint64
@@ -64,6 +68,8 @@ func init() {
 	geth = new(GethInfo)
 	addresses = make(map[string]Address)
 	geth.TotalEthTransferred = big.NewInt(0)
+
+	started = time.Now()
 
 	//etherbaseBlocks = make(map[common.Address]int)
 	//etherbaseBlocksRatio = make(map[common.Address]float64)
@@ -256,7 +262,7 @@ func calculateEtherbaseCounters(block, lastBlock *types.Block) {
 	blockCount++
 
 	txLen := block.Transactions().Len()
-	transactionCount += txLen
+	transactionCount += int64(txLen)
 
 	addr := block.Coinbase()
 
@@ -359,6 +365,14 @@ func loop(ctx context.Context, lastBlock *types.Block) {
 
 	if lastBlock == nil || geth.CurrentBlock.NumberU64() > lastBlock.NumberU64() {
 		log.Printf("Received block #%v with %v transactions (%v)\n", geth.CurrentBlock.NumberU64(), len(geth.CurrentBlock.Transactions()), geth.CurrentBlock.Hash().String())
+
+		if lastBlock != nil {
+			if geth.CurrentBlock.NumberU64() == lastBlock.NumberU64() + 1 {
+				blockCountConsecutive++
+			} else {
+				blockCountConsecutive = 0
+			}
+		}
 
 		geth.LastBlockUpdate = time.Now()
 		geth.LoadTime = time.Now().Sub(t1).Seconds()
@@ -481,6 +495,7 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	allOut = append(allOut, fmt.Sprintf("geth_api_suggested_gas_price %v", geth.SugGasPrice))
 
 	allOut = append(allOut, fmt.Sprintf("geth_load_time_seconds %0.4f", geth.LoadTime))
+	allOut = append(allOut, fmt.Sprintf("geth_exporter_uptime %0f", time.Now().Sub(started).Seconds()))
 
 	if geth.Sync != nil {
 		allOut = append(allOut, fmt.Sprintf("geth_sync_known_states %v", int(geth.Sync.KnownStates)))
@@ -489,6 +504,7 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	allOut = append(allOut, fmt.Sprintf("geth_blocks_total %v", blockCount))
+	allOut = append(allOut, fmt.Sprintf("geth_blocks_consecutive_total %v", blockCountConsecutive))
 	allOut = append(allOut, fmt.Sprintf("geth_transactions_total %v", transactionCount))
 
 	mu.Lock()
