@@ -441,7 +441,7 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	allOut = append(allOut, fmt.Sprintf("geth_block_transactions_value_max %v", ToEther(geth.MaxEthTransferred)))
 	allOut = append(allOut, fmt.Sprintf("geth_block_transactions_value_median %v", ToEther(geth.MedEthTransferred)))
 	allOut = append(allOut, fmt.Sprintf("geth_block_transactions_value_mean %v", ToEther(geth.MeanEthTransferred)))
-	
+
 	allOut = append(allOut, fmt.Sprintf("geth_block_nonce %v", block.Nonce()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_difficulty %v", block.Difficulty()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_uncles_count %v", len(block.Uncles())))
@@ -490,7 +490,7 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(etherbaseWinStreaking) > 0 {
-		allOut = append(allOut, fmt.Sprintf("geth_etherbase_streak{\"%s\"} %d", etherbaseWinStreaking[0].Hex(), len(etherbaseWinStreaking)))
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_streak{address=\"%s\"} %d", etherbaseWinStreaking[0].Hex(), len(etherbaseWinStreaking)))
 	}
 
 	for k, v := range etherbaseBlocks10 {
