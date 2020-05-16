@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -78,6 +79,10 @@ type GethInfo struct {
 	BlockSize              float64
 	LoadTime               float64
 	TotalEthTransferred    *big.Int
+	MaxEthTransferred *big.Int
+	MinEthTransferred *big.Int
+	MedEthTransferred *big.Int
+	MeanEthTransferred *big.Int
 	CurrentBlock           *types.Block
 	Sync                   *ethereum.SyncProgress
 	LastBlockUpdate        time.Time
@@ -145,6 +150,13 @@ func main() {
 
 func CalculateBlockTotals(block *types.Block) {
 	geth.TotalEthTransferred = big.NewInt(0)
+
+	geth.MinEthTransferred = big.NewInt(-1)
+	geth.MaxEthTransferred = big.NewInt(0)
+	geth.MedEthTransferred = big.NewInt(0)
+	transferVals := []*big.Int{}
+	geth.MeanEthTransferred = big.NewInt(0)
+
 	geth.ContractsCreated = 0
 	geth.TokenTransfers = 0
 	geth.EthTransfers = 0
@@ -182,6 +194,14 @@ func CalculateBlockTotals(block *types.Block) {
 		}
 
 		geth.TotalEthTransferred.Add(geth.TotalEthTransferred, b.Value())
+		transferVals = append(transferVals, b.Value())
+
+		if b.Value().Cmp(geth.MaxEthTransferred) > 0 {
+			geth.MaxEthTransferred.Set(b.Value())
+		}
+		if geth.MinEthTransferred.Sign() < 0 || b.Value().Cmp(geth.MinEthTransferred) < 0 {
+			geth.MinEthTransferred.Set(b.Value())
+		}
 
 		geth.GasSpent.Add(geth.GasSpent, new(big.Int).Mul(b.GasPrice(), new(big.Int).SetUint64(b.Gas())))
 		gasPriceSum.Add(gasPriceSum, b.GasPrice())
@@ -198,12 +218,25 @@ func CalculateBlockTotals(block *types.Block) {
 	if block.Transactions().Len() > 0 {
 		geth.GasPriceMean.Div(gasPriceSum, new(big.Int).SetUint64(uint64(block.Transactions().Len())))
 		geth.TransactionNonceMean = txNonceSum / uint64(block.Transactions().Len())
+		geth.MeanEthTransferred.Div(geth.TotalEthTransferred, big.NewInt(int64(block.Transactions().Len())))
 	}
 
+	sort.Slice(gasPrices, func(i, j int) bool {
+		return gasPrices[i].Cmp(gasPrices[j]) < 0
+	})
 	if len(gasPrices) >= 2 {
 		geth.GasPriceMedian = gasPrices[len(gasPrices)/2]
 	} else if len(gasPrices) == 1 {
 		geth.GasPriceMedian = gasPrices[0]
+	}
+
+	sort.Slice(transferVals, func(i, j int) bool {
+		return transferVals[i].Cmp(transferVals[j]) < 0
+	})
+	if len(transferVals) >= 2 {
+		geth.MedEthTransferred = transferVals[len(transferVals)/2]
+	} else if len(transferVals) == 1 {
+		geth.MedEthTransferred = transferVals[0]
 	}
 
 	if len(txNonces) >= 2 {
@@ -403,6 +436,12 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 
 	allOut = append(allOut, fmt.Sprintf("geth_block_transactions_count %v", block.Transactions().Len()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_transactions_sum_value_transfer %v", ToEther(geth.TotalEthTransferred)))
+
+	allOut = append(allOut, fmt.Sprintf("geth_block_transactions_value_min %v", ToEther(geth.MinEthTransferred)))
+	allOut = append(allOut, fmt.Sprintf("geth_block_transactions_value_max %v", ToEther(geth.MaxEthTransferred)))
+	allOut = append(allOut, fmt.Sprintf("geth_block_transactions_value_median %v", ToEther(geth.MedEthTransferred)))
+	allOut = append(allOut, fmt.Sprintf("geth_block_transactions_value_mean %v", ToEther(geth.MeanEthTransferred)))
+	
 	allOut = append(allOut, fmt.Sprintf("geth_block_nonce %v", block.Nonce()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_difficulty %v", block.Difficulty()))
 	allOut = append(allOut, fmt.Sprintf("geth_block_uncles_count %v", len(block.Uncles())))
