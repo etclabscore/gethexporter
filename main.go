@@ -40,7 +40,7 @@ var (
 	//etherbaseTransactionsRatio map[common.Address]float64
 
 	//etherbaseBlockTimeDeltaCache = cache.New(15*24*time.Hour, 10*time.Minute)
-	etherbaseBalances = cache.New(15*24*time.Hour, 10*time.Minute)
+	etherbaseCounts = cache.New(15*24*time.Hour, 10*time.Minute)
 
 	etherbaseBlocks10   map[common.Address]int
 	etherbaseBlocks100   map[common.Address]int
@@ -337,9 +337,16 @@ func Routine() {
 			calculateEtherbaseCounters(geth.CurrentBlock, lastBlock)
 
 			// Update the winning etherbase in the ttl map
-			etherbaseBalances.SetDefault(geth.CurrentBlock.Coinbase().Hex(), true)
+			etherbaseStr := geth.CurrentBlock.Coinbase().Hex()
 
-			its := etherbaseBalances.Items()
+			// Increment etherbase win tallies
+			if it, ok := etherbaseCounts.Get(etherbaseStr); ok {
+				etherbaseCounts.SetDefault(etherbaseStr, it.(int)+1)
+			} else {
+				etherbaseCounts.SetDefault(etherbaseStr, 1)
+			}
+
+			its := etherbaseCounts.Items()
 			etherbaseBalanceM = make(map[string]*big.Int, len(its))
 			for k := range its {
 				b, err := eth.BalanceAt(ctx, common.HexToAddress(k), geth.CurrentBlock.Number())
@@ -430,6 +437,10 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	for _, v := range addresses {
 		allOut = append(allOut, fmt.Sprintf("geth_address_balance{address=\"%v\"} %v", v.Address, ToEther(v.Balance).String()))
 		allOut = append(allOut, fmt.Sprintf("geth_address_nonce{address=\"%v\"} %v", v.Address, v.Nonce))
+	}
+	
+	for k, v := range etherbaseCounts.Items() {
+		allOut = append(allOut, fmt.Sprintf("geth_etherbase_count{address=\"%s\"} %v", k, v.Object.(int)))
 	}
 
 	for k, v := range etherbaseBlocks10 {
