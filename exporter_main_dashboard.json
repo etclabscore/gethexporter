@@ -1202,6 +1202,11 @@
           "alias": "Hashrate",
           "fill": 3,
           "linewidth": 0
+        },
+        {
+          "alias": "block time avg [5m]",
+          "color": "#1F60C4",
+          "linewidth": 4
         }
       ],
       "spaceLength": 10,
@@ -1229,6 +1234,14 @@
           "interval": "",
           "legendFormat": "block time delta",
           "refId": "C"
+        },
+        {
+          "expr": "avg_over_time(geth_block_delta_seconds[10m])",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "block time avg [5m]",
+          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -2572,7 +2585,7 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {
@@ -2606,5 +2619,5 @@
   "variables": {
     "list": []
   },
-  "version": 7
+  "version": 9
 }
