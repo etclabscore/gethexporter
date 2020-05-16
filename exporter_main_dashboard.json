@@ -1045,6 +1045,7 @@
           "expr": "geth_block_etherbase",
           "format": "time_series",
           "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "{{address}}",
           "refId": "A"
         }
@@ -1809,6 +1810,98 @@
     },
     {
       "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 5,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 48
+      },
+      "hiddenSeries": false,
+      "id": 83,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 0,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "geth_block_gas_used ",
+          "interval": "",
+          "legendFormat": "gas used",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "gas_used",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
       "bars": true,
       "dashLength": 10,
       "dashes": false,
@@ -1819,7 +1912,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 53
       },
       "hiddenSeries": false,
       "id": 57,
@@ -1908,7 +2001,7 @@
         "h": 4,
         "w": 12,
         "x": 0,
-        "y": 53
+        "y": 58
       },
       "hiddenSeries": false,
       "id": 50,
@@ -2006,7 +2099,7 @@
         "h": 4,
         "w": 12,
         "x": 12,
-        "y": 53
+        "y": 58
       },
       "hiddenSeries": false,
       "id": 76,
@@ -2104,7 +2197,7 @@
         "h": 10,
         "w": 4,
         "x": 0,
-        "y": 57
+        "y": 62
       },
       "hiddenSeries": false,
       "id": 69,
@@ -2197,7 +2290,7 @@
         "h": 10,
         "w": 4,
         "x": 4,
-        "y": 57
+        "y": 62
       },
       "hiddenSeries": false,
       "id": 70,
@@ -2290,7 +2383,7 @@
         "h": 10,
         "w": 4,
         "x": 8,
-        "y": 57
+        "y": 62
       },
       "hiddenSeries": false,
       "id": 71,
@@ -2383,7 +2476,7 @@
         "h": 10,
         "w": 4,
         "x": 12,
-        "y": 57
+        "y": 62
       },
       "hiddenSeries": false,
       "id": 72,
@@ -2476,7 +2569,7 @@
         "h": 10,
         "w": 4,
         "x": 16,
-        "y": 57
+        "y": 62
       },
       "hiddenSeries": false,
       "id": 67,
@@ -2569,7 +2662,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 67
+        "y": 72
       },
       "id": 42,
       "panels": [],
@@ -2619,5 +2712,5 @@
   "variables": {
     "list": []
   },
-  "version": 9
+  "version": 3
 }
