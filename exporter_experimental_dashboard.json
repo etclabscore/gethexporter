@@ -141,7 +141,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 4,
+      "fill": 5,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
@@ -161,7 +161,7 @@
         "values": false
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 0,
       "nullPointMode": "null",
       "options": {
         "dataLinks": []
@@ -235,7 +235,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 1,
+      "fill": 3,
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
@@ -254,11 +254,11 @@
         "min": true,
         "rightSide": true,
         "show": true,
-        "total": false,
+        "total": true,
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 0,
       "nullPointMode": "null",
       "options": {
         "dataLinks": []
@@ -267,7 +267,18 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "txs"
+        },
+        {
+          "alias": "0 gas price",
+          "color": "#C4162A",
+          "lines": true,
+          "linewidth": 7,
+          "zindex": 3
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -278,6 +289,18 @@
           "interval": "",
           "legendFormat": "gas price min",
           "refId": "A"
+        },
+        {
+          "expr": "geth_block_transactions_count",
+          "interval": "",
+          "legendFormat": "txs",
+          "refId": "B"
+        },
+        {
+          "expr": "count(geth_block_gas_price_min == 0)",
+          "interval": "",
+          "legendFormat": "0 gas price",
+          "refId": "C"
         }
       ],
       "thresholds": [],
@@ -446,5 +469,5 @@
   "variables": {
     "list": []
   },
-  "version": 3
+  "version": 5
 }
