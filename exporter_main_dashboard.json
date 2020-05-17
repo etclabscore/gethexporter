@@ -2041,7 +2041,7 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "avg gas used 1d",
+          "alias": "avg gas used 1h",
           "bars": false,
           "color": "#8F3BB8",
           "fill": 0,
@@ -2060,9 +2060,9 @@
           "refId": "A"
         },
         {
-          "expr": "avg_over_time(geth_block_gas_used[1d])",
+          "expr": "avg_over_time(geth_block_gas_used[1h])",
           "interval": "",
-          "legendFormat": "avg gas used 1d",
+          "legendFormat": "avg gas used 1h",
           "refId": "B"
         }
       ],
@@ -3125,7 +3125,7 @@
     "list": []
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -3159,5 +3159,5 @@
   "variables": {
     "list": []
   },
-  "version": 17
+  "version": 18
 }
