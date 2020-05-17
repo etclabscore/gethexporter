@@ -745,7 +745,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Consecutive Blocks",
+      "title": "Consecutive Block Misses",
       "tooltip": {
         "shared": false,
         "sort": 0,
@@ -928,7 +928,7 @@
       "pluginVersion": "6.7.3",
       "targets": [
         {
-          "expr": "(rate(geth_blocks_consecutive_total[6h]) / rate(geth_blocks_total[6h])) * 100",
+          "expr": "(1-(geth_blocks_skipped_total / geth_blocks_total)) * 100",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -937,7 +937,7 @@
           "refId": "A"
         }
       ],
-      "title": "Consecutive Block Rate 6h",
+      "title": "Consecutive Block Ratio",
       "transparent": true,
       "type": "stat"
     },
@@ -3159,5 +3159,5 @@
   "variables": {
     "list": []
   },
-  "version": 16
+  "version": 17
 }
