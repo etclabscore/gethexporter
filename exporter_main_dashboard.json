@@ -289,7 +289,7 @@
       "datasource": null,
       "gridPos": {
         "h": 4,
-        "w": 3,
+        "w": 5,
         "x": 8,
         "y": 1
       },
@@ -376,7 +376,7 @@
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 11,
+        "x": 13,
         "y": 1
       },
       "id": 12,
@@ -444,8 +444,8 @@
       "datasource": null,
       "gridPos": {
         "h": 8,
-        "w": 3,
-        "x": 16,
+        "w": 7,
+        "x": 17,
         "y": 1
       },
       "id": 90,
@@ -697,7 +697,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 4,
-        "w": 12,
+        "w": 13,
         "x": 4,
         "y": 5
       },
@@ -3132,5 +3132,5 @@
   "variables": {
     "list": []
   },
-  "version": 9
+  "version": 10
 }
