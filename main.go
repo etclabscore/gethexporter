@@ -36,7 +36,10 @@ var (
 
 	blockCount            int64
 	blockCountConsecutive int64
+	blockSkippedCount     uint64
 	transactionCount      int64
+	transactionsZeroGas   uint64
+	bigZero               = big.NewInt(0)
 	addresses             map[string]Address
 	etherbaseBalanceM     map[string]*big.Int
 	//etherbaseBlocks            map[common.Address]int
@@ -259,11 +262,7 @@ func CalculateBlockTotals(block *types.Block) {
 
 func calculateEtherbaseCounters(block, lastBlock *types.Block) {
 
-	blockCount++
-
 	txLen := block.Transactions().Len()
-	transactionCount += int64(txLen)
-
 	addr := block.Coinbase()
 
 	for len(etherbaseBlocksSl) >= 10000 {
@@ -366,10 +365,20 @@ func loop(ctx context.Context, lastBlock *types.Block) {
 	if lastBlock == nil || geth.CurrentBlock.NumberU64() > lastBlock.NumberU64() {
 		log.Printf("Received block #%v with %v transactions (%v)\n", geth.CurrentBlock.NumberU64(), len(geth.CurrentBlock.Transactions()), geth.CurrentBlock.Hash().String())
 
-		// Update the winning etherbase in the ttl map
-		etherbaseStr := geth.CurrentBlock.Coinbase().Hex()
+		geth.LastBlockUpdate = time.Now()
+		geth.LoadTime = time.Now().Sub(t1).Seconds()
+
+		blockCount++
+		transactionCount += int64(geth.CurrentBlock.Transactions().Len())
+		for _, t := range geth.CurrentBlock.Transactions() {
+			if t.GasPrice().Cmp(bigZero) == 0 {
+				transactionsZeroGas++
+			}
+		}
 
 		if lastBlock != nil {
+			blockSkippedCount += geth.CurrentBlock.NumberU64()  - 1 - lastBlock.NumberU64()
+
 			if geth.CurrentBlock.NumberU64() == lastBlock.NumberU64()+1 {
 
 				blockCountConsecutive++
@@ -388,10 +397,10 @@ func loop(ctx context.Context, lastBlock *types.Block) {
 			}
 		}
 
-		geth.LastBlockUpdate = time.Now()
-		geth.LoadTime = time.Now().Sub(t1).Seconds()
-
 		calculateEtherbaseCounters(geth.CurrentBlock, lastBlock)
+
+		// Update the winning etherbase in the ttl map
+		etherbaseStr := geth.CurrentBlock.Coinbase().Hex()
 
 		// Increment etherbase win tallies
 		if it, ok := etherbaseCounts.Get(etherbaseStr); ok {
@@ -508,8 +517,10 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	allOut = append(allOut, fmt.Sprintf("geth_blocks_total %v", blockCount))
-	allOut = append(allOut, fmt.Sprintf("geth_blocks_consecutive_total %v", blockCountConsecutive))
+	allOut = append(allOut, fmt.Sprintf("geth_blocks_consecutive_total %v", blockCountConsecutive)) // not actually a total, its a gauge
+	allOut = append(allOut, fmt.Sprintf("geth_blocks_skipped_total %v", blockSkippedCount))
 	allOut = append(allOut, fmt.Sprintf("geth_transactions_total %v", transactionCount))
+	allOut = append(allOut, fmt.Sprintf("geth_transactions_zerogas_total %v", transactionsZeroGas))
 
 	mu.Lock()
 	for _, v := range addresses {
