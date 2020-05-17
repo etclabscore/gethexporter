@@ -20,6 +20,99 @@
   "panels": [
     {
       "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 31,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "geth_block_etherbase",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{address}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Etherbases",
+      "tooltip": {
+        "shared": false,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
@@ -30,7 +123,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 4
       },
       "hiddenSeries": false,
       "id": 28,
@@ -71,7 +164,7 @@
       "timeShift": null,
       "title": "Etherbase Streaks",
       "tooltip": {
-        "shared": true,
+        "shared": false,
         "sort": 0,
         "value_type": "individual"
       },
@@ -118,7 +211,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 4
       },
       "hiddenSeries": false,
       "id": 26,
@@ -160,7 +253,7 @@
       "title": "Max Etherbase Streak [1h] by Address",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -201,7 +294,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 12
       },
       "id": 10,
       "panels": [],
@@ -215,7 +308,7 @@
         "h": 2,
         "w": 4,
         "x": 0,
-        "y": 9
+        "y": 13
       },
       "id": 2,
       "links": [],
@@ -280,7 +373,7 @@
         "h": 2,
         "w": 4,
         "x": 4,
-        "y": 9
+        "y": 13
       },
       "id": 4,
       "links": [],
@@ -347,13 +440,13 @@
       "fill": 5,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 7,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 15
       },
       "hiddenSeries": false,
-      "id": 24,
+      "id": 29,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -388,10 +481,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max(geth_etherbase_block_10_total)",
+          "expr": "max(geth_etherbase_block_10_total) by (address)",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "max etherbase ratio",
+          "legendFormat": "{{address}}",
           "refId": "A"
         },
         {
@@ -405,7 +498,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "max(geth_etherbase_block_10_total)",
+      "title": "max(geth_etherbase_block_10_total) by address",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -455,7 +548,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 22
       },
       "hiddenSeries": false,
       "id": 22,
@@ -486,7 +579,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "geth_etherbase_block_10_total",
+          "expr": "sum(geth_etherbase_block_10_total) by (address)",
           "interval": "",
           "legendFormat": "{{address}}",
           "refId": "A"
@@ -545,7 +638,7 @@
         "h": 11,
         "w": 11,
         "x": 0,
-        "y": 23
+        "y": 28
       },
       "hiddenSeries": false,
       "id": 8,
@@ -635,7 +728,7 @@
         "h": 22,
         "w": 13,
         "x": 11,
-        "y": 23
+        "y": 28
       },
       "hiddenSeries": false,
       "id": 12,
@@ -725,7 +818,7 @@
         "h": 11,
         "w": 11,
         "x": 0,
-        "y": 34
+        "y": 39
       },
       "hiddenSeries": false,
       "id": 6,
@@ -815,7 +908,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 50
       },
       "hiddenSeries": false,
       "id": 14,
@@ -905,7 +998,7 @@
         "h": 18,
         "w": 24,
         "x": 0,
-        "y": 54
+        "y": 59
       },
       "hiddenSeries": false,
       "id": 16,
@@ -1015,5 +1108,5 @@
   "variables": {
     "list": []
   },
-  "version": 5
+  "version": 8
 }
