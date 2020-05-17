@@ -444,26 +444,34 @@
       "datasource": null,
       "gridPos": {
         "h": 8,
-        "w": 4,
-        "x": 20,
+        "w": 3,
+        "x": 16,
         "y": 1
       },
       "id": 90,
       "links": [],
       "options": {
+        "colorMode": "value",
         "fieldOptions": {
           "calcs": [
             "lastNotNull"
           ],
           "defaults": {
-            "links": [],
-            "mappings": [],
+            "mappings": [
+              {
+                "id": 0,
+                "op": "=",
+                "text": "N/A",
+                "type": 1,
+                "value": "null"
+              }
+            ],
             "nullValueMode": "connected",
             "thresholds": {
               "mode": "absolute",
               "steps": [
                 {
-                  "color": "semi-dark-red",
+                  "color": "dark-red",
                   "value": null
                 },
                 {
@@ -472,15 +480,15 @@
                 },
                 {
                   "color": "#6ED0E0",
-                  "value": 40
+                  "value": 50
                 },
                 {
-                  "color": "light-green",
-                  "value": 70
+                  "color": "dark-green",
+                  "value": 100
                 },
                 {
                   "color": "dark-purple",
-                  "value": 100
+                  "value": 500
                 }
               ]
             },
@@ -489,9 +497,9 @@
           "overrides": [],
           "values": false
         },
-        "orientation": "horizontal",
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal"
       },
       "pluginVersion": "6.7.3",
       "targets": [
@@ -507,7 +515,7 @@
       ],
       "title": "Current Consecutive Block",
       "transparent": true,
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -689,7 +697,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 4,
-        "w": 14,
+        "w": 12,
         "x": 4,
         "y": 5
       },
@@ -3090,7 +3098,7 @@
     "list": []
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
@@ -3124,5 +3132,5 @@
   "variables": {
     "list": []
   },
-  "version": 8
+  "version": 9
 }
