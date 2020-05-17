@@ -366,36 +366,38 @@ func loop(ctx context.Context, lastBlock *types.Block) {
 	if lastBlock == nil || geth.CurrentBlock.NumberU64() > lastBlock.NumberU64() {
 		log.Printf("Received block #%v with %v transactions (%v)\n", geth.CurrentBlock.NumberU64(), len(geth.CurrentBlock.Transactions()), geth.CurrentBlock.Hash().String())
 
+		// Update the winning etherbase in the ttl map
+		etherbaseStr := geth.CurrentBlock.Coinbase().Hex()
+
 		if lastBlock != nil {
-			if geth.CurrentBlock.NumberU64() == lastBlock.NumberU64() + 1 {
+			if geth.CurrentBlock.NumberU64() == lastBlock.NumberU64()+1 {
+
 				blockCountConsecutive++
+
+				geth.BlockTimeDelta = geth.CurrentBlock.Time() - lastBlock.Time()
+
+				if len(etherbaseWinStreaking) == 0 || etherbaseWinStreaking[0] != geth.CurrentBlock.Coinbase() {
+					etherbaseWinStreaking = []common.Address{geth.CurrentBlock.Coinbase()}
+				} else {
+					etherbaseWinStreaking = append(etherbaseWinStreaking, geth.CurrentBlock.Coinbase())
+				}
+
 			} else {
 				blockCountConsecutive = 0
+				etherbaseWinStreaking = []common.Address{}
 			}
 		}
 
 		geth.LastBlockUpdate = time.Now()
 		geth.LoadTime = time.Now().Sub(t1).Seconds()
-		if lastBlock != nil {
-			geth.BlockTimeDelta = geth.CurrentBlock.Time() - lastBlock.Time()
-		}
 
 		calculateEtherbaseCounters(geth.CurrentBlock, lastBlock)
-
-		// Update the winning etherbase in the ttl map
-		etherbaseStr := geth.CurrentBlock.Coinbase().Hex()
 
 		// Increment etherbase win tallies
 		if it, ok := etherbaseCounts.Get(etherbaseStr); ok {
 			etherbaseCounts.SetDefault(etherbaseStr, it.(int)+1)
 		} else {
 			etherbaseCounts.SetDefault(etherbaseStr, 1)
-		}
-
-		if len(etherbaseWinStreaking) == 0 || etherbaseWinStreaking[0] != geth.CurrentBlock.Coinbase() {
-			etherbaseWinStreaking = []common.Address{geth.CurrentBlock.Coinbase()}
-		} else {
-			etherbaseWinStreaking = append(etherbaseWinStreaking, geth.CurrentBlock.Coinbase())
 		}
 
 		its := etherbaseCounts.Items()
@@ -408,6 +410,8 @@ func loop(ctx context.Context, lastBlock *types.Block) {
 				mu.Lock()
 				etherbaseBalanceM[k] = b
 				mu.Unlock()
+			} else {
+				log.Println("error getting etherbase balance", err, etherbaseStr)
 			}
 		}
 	}
