@@ -454,7 +454,7 @@
       "type": "stat"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
@@ -885,6 +885,7 @@
       "id": 93,
       "links": [],
       "options": {
+        "colorMode": "value",
         "fieldOptions": {
           "calcs": [
             "last"
@@ -907,9 +908,9 @@
           "overrides": [],
           "values": false
         },
-        "orientation": "horizontal",
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal"
       },
       "pluginVersion": "6.7.3",
       "targets": [
@@ -927,7 +928,7 @@
       "timeShift": null,
       "title": "Hashrate",
       "transparent": true,
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -3330,5 +3331,5 @@
   "variables": {
     "list": []
   },
-  "version": 20
+  "version": 22
 }
