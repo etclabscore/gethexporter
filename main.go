@@ -117,6 +117,14 @@ type Address struct {
 	Nonce   uint64
 }
 
+func mustInitEthClient(err error) {
+	for ; eth == nil || err != nil; eth, err = ethclient.Dial(geth.GethServer) {
+		log.Println("ethclient", "eth", eth, "err", err)
+		log.Println("re-attempting in 5s...")
+		time.Sleep(5 * time.Second)
+	}
+}
+
 func main() {
 	var err error
 	defer eth.Close()
@@ -136,11 +144,7 @@ func main() {
 
 	log.Printf("Connecting to Ethereum node: %v\n", geth.GethServer)
 
-	for ; eth == nil || err != nil; eth, err = ethclient.Dial(geth.GethServer) {
-		log.Println("ethclient", "eth", eth, "err", err)
-		log.Println("re-attempting in 5s...")
-		time.Sleep(5 * time.Second)
-	}
+	mustInitEthClient(err)
 	for ; geth.CurrentBlock == nil || err != nil; geth.CurrentBlock, err = eth.BlockByNumber(context.Background(), nil) {
 		log.Println("init client current block", "block", geth.CurrentBlock, err)
 		log.Println("re-attempting in 5s...")
@@ -353,7 +357,8 @@ func loop(ctx context.Context, lastBlock *types.Block) {
 	var err error
 	geth.CurrentBlock, err = eth.BlockByNumber(ctx, nil)
 	if err != nil {
-		log.Printf("issue with reponse from geth server: %v\n", geth.CurrentBlock)
+		log.Printf("issue with reponse from geth server: %v\n", err)
+		mustInitEthClient(err)
 		return
 	}
 	geth.SugGasPrice, _ = eth.SuggestGasPrice(ctx)
