@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 4,
+  "id": 5,
   "links": [],
   "panels": [
     {
@@ -699,7 +699,7 @@
           "label": null,
           "logBase": 1,
           "max": "1000",
-          "min": null,
+          "min": "0",
           "show": true
         },
         {
@@ -739,7 +739,7 @@
         "max": true,
         "min": true,
         "rightSide": true,
-        "show": true,
+        "show": false,
         "total": false,
         "values": true
       },
@@ -789,7 +789,7 @@
           "label": null,
           "logBase": 1,
           "max": "100",
-          "min": null,
+          "min": "0",
           "show": true
         },
         {
@@ -969,7 +969,7 @@
           "label": null,
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": "0",
           "show": true
         },
         {
@@ -1108,5 +1108,5 @@
   "variables": {
     "list": []
   },
-  "version": 8
+  "version": 4
 }
