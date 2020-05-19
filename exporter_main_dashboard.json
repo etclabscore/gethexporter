@@ -62,7 +62,7 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 4,
+        "h": 3,
         "w": 3,
         "x": 0,
         "y": 1
@@ -131,7 +131,7 @@
       "cacheTimeout": null,
       "datasource": null,
       "gridPos": {
-        "h": 4,
+        "h": 3,
         "w": 5,
         "x": 3,
         "y": 1
@@ -198,7 +198,7 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 4,
+        "h": 3,
         "w": 7,
         "x": 8,
         "y": 1
@@ -299,7 +299,7 @@
       "cacheTimeout": null,
       "datasource": null,
       "gridPos": {
-        "h": 4,
+        "h": 3,
         "w": 4,
         "x": 15,
         "y": 1
@@ -378,7 +378,7 @@
       "cacheTimeout": null,
       "datasource": null,
       "gridPos": {
-        "h": 4,
+        "h": 3,
         "w": 5,
         "x": 19,
         "y": 1
@@ -460,7 +460,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 4
       },
       "id": 95,
       "panels": [],
@@ -489,7 +489,7 @@
         "h": 2,
         "w": 3,
         "x": 0,
-        "y": 6
+        "y": 5
       },
       "id": 34,
       "interval": null,
@@ -575,7 +575,7 @@
         "h": 2,
         "w": 3,
         "x": 3,
-        "y": 6
+        "y": 5
       },
       "id": 32,
       "interval": null,
@@ -661,7 +661,7 @@
         "h": 4,
         "w": 4,
         "x": 6,
-        "y": 6
+        "y": 5
       },
       "id": 12,
       "interval": null,
@@ -730,7 +730,7 @@
         "h": 4,
         "w": 5,
         "x": 10,
-        "y": 6
+        "y": 5
       },
       "id": 37,
       "links": [],
@@ -809,7 +809,7 @@
         "h": 4,
         "w": 4,
         "x": 15,
-        "y": 6
+        "y": 5
       },
       "id": 6,
       "links": [],
@@ -880,7 +880,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 6
+        "y": 5
       },
       "id": 93,
       "links": [],
@@ -952,7 +952,7 @@
         "h": 2,
         "w": 6,
         "x": 0,
-        "y": 8
+        "y": 7
       },
       "id": 2,
       "interval": null,
@@ -1026,10 +1026,10 @@
         "h": 5,
         "w": 8,
         "x": 0,
-        "y": 10
+        "y": 9
       },
       "hiddenSeries": false,
-      "id": 36,
+      "id": 97,
       "legend": {
         "avg": false,
         "current": false,
@@ -1121,22 +1121,23 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 5,
+        "h": 9,
         "w": 16,
         "x": 8,
-        "y": 10
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 82,
       "legend": {
-        "avg": false,
+        "alignAsTable": true,
+        "avg": true,
         "current": false,
-        "max": false,
-        "min": false,
+        "max": true,
+        "min": true,
         "rightSide": false,
-        "show": false,
+        "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -1165,14 +1166,20 @@
         {
           "expr": "avg_over_time(geth_block_difficulty[5m]) / avg_over_time(geth_block_delta_seconds[5m])",
           "interval": "",
-          "legendFormat": "",
+          "legendFormat": "5m avg",
           "refId": "B"
         },
         {
           "expr": "avg_over_time(geth_block_difficulty[1h]) / avg_over_time(geth_block_delta_seconds[1h])",
           "interval": "",
-          "legendFormat": "",
+          "legendFormat": "1h avg",
           "refId": "C"
+        },
+        {
+          "expr": "avg_over_time(geth_block_difficulty[1d]) / avg_over_time(geth_block_delta_seconds[1d])",
+          "interval": "",
+          "legendFormat": "1h avg",
+          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -1219,13 +1226,104 @@
       }
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 0,
+        "y": 14
+      },
+      "hiddenSeries": false,
+      "id": 36,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "geth_block_number",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "rate",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Block Height",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 18
       },
       "id": 48,
       "panels": [],
@@ -1244,7 +1342,7 @@
         "h": 4,
         "w": 8,
         "x": 0,
-        "y": 16
+        "y": 19
       },
       "hiddenSeries": false,
       "id": 68,
@@ -1336,7 +1434,7 @@
         "h": 4,
         "w": 16,
         "x": 8,
-        "y": 16
+        "y": 19
       },
       "hiddenSeries": false,
       "id": 81,
@@ -1438,7 +1536,7 @@
         "h": 5,
         "w": 19,
         "x": 0,
-        "y": 20
+        "y": 23
       },
       "hiddenSeries": false,
       "id": 18,
@@ -1564,7 +1662,7 @@
         "h": 5,
         "w": 5,
         "x": 19,
-        "y": 20
+        "y": 23
       },
       "id": 96,
       "links": [],
@@ -1648,7 +1746,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 25
+        "y": 28
       },
       "hiddenSeries": false,
       "id": 46,
@@ -1738,7 +1836,7 @@
         "h": 5,
         "w": 12,
         "x": 12,
-        "y": 25
+        "y": 28
       },
       "hiddenSeries": false,
       "id": 8,
@@ -1825,7 +1923,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 33
       },
       "id": 44,
       "panels": [],
@@ -1846,7 +1944,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 34
       },
       "hiddenSeries": false,
       "id": 5,
@@ -1972,7 +2070,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 41
       },
       "hiddenSeries": false,
       "id": 52,
@@ -2086,7 +2184,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 46
       },
       "hiddenSeries": false,
       "id": 75,
@@ -2184,7 +2282,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 51
       },
       "hiddenSeries": false,
       "id": 83,
@@ -2291,7 +2389,7 @@
         "h": 5,
         "w": 19,
         "x": 0,
-        "y": 53
+        "y": 56
       },
       "hiddenSeries": false,
       "id": 57,
@@ -2375,7 +2473,7 @@
         "h": 3,
         "w": 5,
         "x": 19,
-        "y": 53
+        "y": 56
       },
       "id": 86,
       "links": [],
@@ -2440,7 +2538,7 @@
         "h": 3,
         "w": 5,
         "x": 19,
-        "y": 56
+        "y": 59
       },
       "id": 87,
       "links": [],
@@ -2506,7 +2604,7 @@
         "h": 7,
         "w": 19,
         "x": 0,
-        "y": 58
+        "y": 61
       },
       "hiddenSeries": false,
       "id": 84,
@@ -2620,7 +2718,7 @@
         "h": 4,
         "w": 12,
         "x": 0,
-        "y": 65
+        "y": 68
       },
       "hiddenSeries": false,
       "id": 50,
@@ -2718,7 +2816,7 @@
         "h": 4,
         "w": 12,
         "x": 12,
-        "y": 65
+        "y": 68
       },
       "hiddenSeries": false,
       "id": 76,
@@ -2816,7 +2914,7 @@
         "h": 10,
         "w": 4,
         "x": 0,
-        "y": 69
+        "y": 72
       },
       "hiddenSeries": false,
       "id": 69,
@@ -2909,7 +3007,7 @@
         "h": 10,
         "w": 4,
         "x": 4,
-        "y": 69
+        "y": 72
       },
       "hiddenSeries": false,
       "id": 70,
@@ -3002,7 +3100,7 @@
         "h": 10,
         "w": 4,
         "x": 8,
-        "y": 69
+        "y": 72
       },
       "hiddenSeries": false,
       "id": 71,
@@ -3095,7 +3193,7 @@
         "h": 10,
         "w": 4,
         "x": 12,
-        "y": 69
+        "y": 72
       },
       "hiddenSeries": false,
       "id": 72,
@@ -3188,7 +3286,7 @@
         "h": 10,
         "w": 4,
         "x": 16,
-        "y": 69
+        "y": 72
       },
       "hiddenSeries": false,
       "id": 67,
@@ -3281,7 +3379,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 79
+        "y": 82
       },
       "id": 42,
       "panels": [],
@@ -3331,5 +3429,5 @@
   "variables": {
     "list": []
   },
-  "version": 22
+  "version": 24
 }
