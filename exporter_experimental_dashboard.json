@@ -838,7 +838,7 @@
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -861,5 +861,5 @@
   "variables": {
     "list": []
   },
-  "version": 3
+  "version": 4
 }
