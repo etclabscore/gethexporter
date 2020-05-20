@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 5,
+  "id": 4,
   "links": [],
   "panels": [
     {
@@ -699,7 +699,7 @@
           "label": null,
           "logBase": 1,
           "max": "1000",
-          "min": "0",
+          "min": null,
           "show": true
         },
         {
@@ -739,7 +739,7 @@
         "max": true,
         "min": true,
         "rightSide": true,
-        "show": false,
+        "show": true,
         "total": false,
         "values": true
       },
@@ -789,7 +789,7 @@
           "label": null,
           "logBase": 1,
           "max": "100",
-          "min": "0",
+          "min": null,
           "show": true
         },
         {
@@ -861,7 +861,7 @@
       "timeShift": null,
       "title": "Etherbase Block Ratio 10k",
       "tooltip": {
-        "shared": false,
+        "shared": true,
         "sort": 2,
         "value_type": "individual"
       },
@@ -951,7 +951,7 @@
       "timeShift": null,
       "title": "Etherbase Transaction Ratio 10k",
       "tooltip": {
-        "shared": false,
+        "shared": true,
         "sort": 2,
         "value_type": "individual"
       },
@@ -969,7 +969,7 @@
           "label": null,
           "logBase": 1,
           "max": null,
-          "min": "0",
+          "min": null,
           "show": true
         },
         {
@@ -1085,7 +1085,7 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -1108,5 +1108,5 @@
   "variables": {
     "list": []
   },
-  "version": 4
+  "version": 10
 }
