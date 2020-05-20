@@ -382,7 +382,7 @@ func loop(ctx context.Context, lastBlock *types.Block) {
 		}
 
 		if lastBlock != nil {
-			blockSkippedCount += geth.CurrentBlock.NumberU64()  - 1 - lastBlock.NumberU64()
+			blockSkippedCount += geth.CurrentBlock.NumberU64() - 1 - lastBlock.NumberU64()
 
 			if geth.CurrentBlock.NumberU64() == lastBlock.NumberU64()+1 {
 

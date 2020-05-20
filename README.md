@@ -1,22 +1,16 @@
-# Geth Server Prometheus Exporter [![](https://images.microbadger.com/badges/image/hunterlong/gethexporter.svg)](https://microbadger.com/images/hunterlong/gethexporter)
-Monitor your Ethereum Geth server with Prometheus and Grafana. Checkout the [Grafana Dashboard](https://grafana.com/dashboards/6976) to implement a beautiful geth server monitor for your own server, or you can just import Dashboard ID: `6976` once you have GethExporter up and running.
+# Geth Server Prometheus Exporter
+Monitor your Ethereum Geth server with Prometheus and Grafana.
 
 <p align="center"><img width="90%" src="https://img.cjx.io/gethexporter-grafana.png"></p>
 
 ## Docker
-Run this Prometheus Exporter in a [Docker container](https://hub.docker.com/r/hunterlong/gethexporter/builds/)! Include your Geth server endpoint as `GETH` environment variable.
+Run this Prometheus Exporter in a [Docker container](https://hub.docker.com/r/devfdn/gethexporter/builds/)! Include your Geth server endpoint as `GETH` environment variable.
 ```bash
 docker run -it -d -p 9090:9090 \
   -e "GETH="http://mygethserverhere.com:8545" \
-  hunterlong/gethexporter
+  devfdn/gethexporter
 ```
 
-## Features
-- Current and Average Gas Price
-- Total amount of ERC20 Token Transfers
-- Total amount of ETH transactions
-- Watch balance on specific addresses
-- Pending Transaction count
 
 ## Environment Variables
 You can add the environment variable `ADDRESSES` with a comma delimited list of ethereum addresses.
@@ -24,6 +18,7 @@ You can add the environment variable `ADDRESSES` with a comma delimited list of 
 - `GETH` = `http://eth.mygethserver.com:8545` Ethereum node endpoint
 - `ADDRESSES` = `0x867fFB5a3871b500f65BdFafe0136f9667Deae06,0xF008E2c7A7F16ac706C2E0EBD3F015D442016420`
 - `DELAY` = `500` millisecond delay between requests
+- `METRICSADDR` = `:6061` set the server listener endpoint. Use `0.0.0.0` to make public.
 
 ## Prometheus Response
 ```
