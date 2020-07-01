@@ -151,7 +151,7 @@ func main() {
 		time.Sleep(5 * time.Second)
 	}
 
-	log.Println("got current block", geth.CurrentBlock.Number(), geth.CurrentBlock.Hash().Hex())
+	log.Println("got initial current block", geth.CurrentBlock.Number(), geth.CurrentBlock.Hash().Hex())
 
 	go Routine()
 
@@ -164,26 +164,39 @@ func main() {
 	}
 }
 
-func Routine() {
-	var lastBlock *types.Block
+func Routine() error {
+	var parentBlock = geth.CurrentBlock
 	ctx := context.Background()
+
 	for {
-		loop(ctx, lastBlock)
-		lastBlock = geth.CurrentBlock
+		latestBlock, err := eth.BlockByNumber(ctx, nil)
+		if err != nil {
+			log.Printf("issue with reponse from geth server: %v\n", err)
+			mustInitEthClient(err)
+			return Routine()
+		}
+		if parentBlock.NumberU64() < latestBlock.NumberU64() {
+
+			// Backfill blocks that occurred within the interval.
+			for i := parentBlock.NumberU64() + 1; i < latestBlock.NumberU64(); i++ {
+				geth.CurrentBlock, _ = eth.BlockByNumber(ctx, big.NewInt(int64(i)))
+				CalculateBlockTotals(geth.CurrentBlock)
+				onBlock(ctx, parentBlock)
+				parentBlock = geth.CurrentBlock
+			}
+
+			geth.CurrentBlock = latestBlock
+			CalculateBlockTotals(geth.CurrentBlock)
+			onBlock(ctx, parentBlock)
+			parentBlock = geth.CurrentBlock
+		}
 		time.Sleep(time.Duration(delay) * time.Millisecond)
 	}
 }
 
-func loop(ctx context.Context, lastBlock *types.Block) {
+func onBlock(ctx context.Context, lastBlock *types.Block) {
 	t1 := time.Now()
 
-	var err error
-	geth.CurrentBlock, err = eth.BlockByNumber(ctx, nil)
-	if err != nil {
-		log.Printf("issue with reponse from geth server: %v\n", err)
-		mustInitEthClient(err)
-		return
-	}
 	geth.SugGasPrice, _ = eth.SuggestGasPrice(ctx)
 	geth.PendingTx, _ = eth.PendingTransactionCount(ctx)
 	geth.NetworkId, _ = eth.NetworkID(ctx)
@@ -367,7 +380,7 @@ func CalculateBlockTotals(block *types.Block) {
 		geth.TransactionNonceMedian = txNonces[0]
 	}
 
-	size := strings.Split(geth.CurrentBlock.Size().String(), " ")
+	size := strings.Split(block.Size().String(), " ")
 	geth.BlockSize = stringToFloat(size[0]) * 1000
 }
 
@@ -469,8 +482,6 @@ func MetricsHttp(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("issue receiving block from URL: %v", geth.GethServer)))
 		return
 	}
-
-	CalculateBlockTotals(block)
 
 	allOut = append(allOut, fmt.Sprintf("geth_block_number %v", block.NumberU64()))
 
@@ -581,6 +592,9 @@ func stringToFloat(s string) float64 {
 //
 // CONVERTS WEI TO ETH
 func ToEther(o *big.Int) *big.Float {
+	if o == nil {
+		return big.NewFloat(0)
+	}
 	pul, int := big.NewFloat(0), big.NewFloat(0)
 	int.SetInt(o)
 	pul.Mul(big.NewFloat(0.000000000000000001), int)
