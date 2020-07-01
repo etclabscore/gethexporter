@@ -164,6 +164,113 @@ func main() {
 	}
 }
 
+func Routine() {
+	var lastBlock *types.Block
+	ctx := context.Background()
+	for {
+		loop(ctx, lastBlock)
+		lastBlock = geth.CurrentBlock
+		time.Sleep(time.Duration(delay) * time.Millisecond)
+	}
+}
+
+func loop(ctx context.Context, lastBlock *types.Block) {
+	t1 := time.Now()
+
+	var err error
+	geth.CurrentBlock, err = eth.BlockByNumber(ctx, nil)
+	if err != nil {
+		log.Printf("issue with reponse from geth server: %v\n", err)
+		mustInitEthClient(err)
+		return
+	}
+	geth.SugGasPrice, _ = eth.SuggestGasPrice(ctx)
+	geth.PendingTx, _ = eth.PendingTransactionCount(ctx)
+	geth.NetworkId, _ = eth.NetworkID(ctx)
+	geth.ChainId, _ = eth.ChainID(ctx)
+	geth.Sync, _ = eth.SyncProgress(ctx)
+
+	if lastBlock == nil || geth.CurrentBlock.NumberU64() > lastBlock.NumberU64() {
+		log.Printf("Received block #%v with %v transactions (%v)\n", geth.CurrentBlock.NumberU64(), len(geth.CurrentBlock.Transactions()), geth.CurrentBlock.Hash().String())
+
+		geth.LastBlockUpdate = time.Now()
+		geth.LoadTime = time.Now().Sub(t1).Seconds()
+
+		blockCount++
+		transactionCount += int64(geth.CurrentBlock.Transactions().Len())
+		for _, t := range geth.CurrentBlock.Transactions() {
+			if t.GasPrice().Cmp(bigZero) == 0 {
+				transactionsZeroGas++
+			}
+		}
+
+		if lastBlock != nil {
+			blockSkippedCount += geth.CurrentBlock.NumberU64() - 1 - lastBlock.NumberU64()
+
+			if geth.CurrentBlock.NumberU64() == lastBlock.NumberU64()+1 {
+
+				blockCountConsecutive++
+
+				geth.BlockTimeDelta = geth.CurrentBlock.Time() - lastBlock.Time()
+
+				if len(etherbaseWinStreaking) == 0 || etherbaseWinStreaking[0] != geth.CurrentBlock.Coinbase() {
+					etherbaseWinStreaking = []common.Address{geth.CurrentBlock.Coinbase()}
+				} else {
+					etherbaseWinStreaking = append(etherbaseWinStreaking, geth.CurrentBlock.Coinbase())
+				}
+
+			} else {
+				blockCountConsecutive = 0
+				etherbaseWinStreaking = []common.Address{}
+			}
+		}
+
+		calculateEtherbaseCounters(geth.CurrentBlock, lastBlock)
+
+		// Update the winning etherbase in the ttl map
+		etherbaseStr := geth.CurrentBlock.Coinbase().Hex()
+
+		// Increment etherbase win tallies
+		if it, ok := etherbaseCounts.Get(etherbaseStr); ok {
+			etherbaseCounts.SetDefault(etherbaseStr, it.(int)+1)
+		} else {
+			etherbaseCounts.SetDefault(etherbaseStr, 1)
+		}
+
+		its := etherbaseCounts.Items()
+		mu.Lock()
+		etherbaseBalanceM = make(map[string]*big.Int, len(its))
+		mu.Unlock()
+		for k := range its {
+			b, err := eth.BalanceAt(ctx, common.HexToAddress(k), geth.CurrentBlock.Number())
+			if err == nil {
+				mu.Lock()
+				etherbaseBalanceM[k] = b
+				mu.Unlock()
+			} else {
+				log.Println("error getting etherbase balance", err, etherbaseStr)
+			}
+		}
+	}
+
+	if watchingAddresses != "" {
+		for _, a := range strings.Split(watchingAddresses, ",") {
+			addr := common.HexToAddress(a)
+			balance, _ := eth.BalanceAt(ctx, addr, geth.CurrentBlock.Number())
+			nonce, _ := eth.NonceAt(ctx, addr, geth.CurrentBlock.Number())
+			address := Address{
+				Address: addr.String(),
+				Balance: balance,
+				Nonce:   nonce,
+			}
+			mu.Lock()
+			addresses[a] = address
+			mu.Unlock()
+		}
+	}
+
+}
+
 func CalculateBlockTotals(block *types.Block) {
 	geth.TotalEthTransferred = big.NewInt(0)
 
@@ -348,113 +455,6 @@ func calculateEtherbaseCounters(block, lastBlock *types.Block) {
 				etherbaseTransactions10000[v.base] += v.nTxs
 			}
 		}
-	}
-}
-
-func loop(ctx context.Context, lastBlock *types.Block) {
-	t1 := time.Now()
-
-	var err error
-	geth.CurrentBlock, err = eth.BlockByNumber(ctx, nil)
-	if err != nil {
-		log.Printf("issue with reponse from geth server: %v\n", err)
-		mustInitEthClient(err)
-		return
-	}
-	geth.SugGasPrice, _ = eth.SuggestGasPrice(ctx)
-	geth.PendingTx, _ = eth.PendingTransactionCount(ctx)
-	geth.NetworkId, _ = eth.NetworkID(ctx)
-	geth.ChainId, _ = eth.ChainID(ctx)
-	geth.Sync, _ = eth.SyncProgress(ctx)
-
-	if lastBlock == nil || geth.CurrentBlock.NumberU64() > lastBlock.NumberU64() {
-		log.Printf("Received block #%v with %v transactions (%v)\n", geth.CurrentBlock.NumberU64(), len(geth.CurrentBlock.Transactions()), geth.CurrentBlock.Hash().String())
-
-		geth.LastBlockUpdate = time.Now()
-		geth.LoadTime = time.Now().Sub(t1).Seconds()
-
-		blockCount++
-		transactionCount += int64(geth.CurrentBlock.Transactions().Len())
-		for _, t := range geth.CurrentBlock.Transactions() {
-			if t.GasPrice().Cmp(bigZero) == 0 {
-				transactionsZeroGas++
-			}
-		}
-
-		if lastBlock != nil {
-			blockSkippedCount += geth.CurrentBlock.NumberU64() - 1 - lastBlock.NumberU64()
-
-			if geth.CurrentBlock.NumberU64() == lastBlock.NumberU64()+1 {
-
-				blockCountConsecutive++
-
-				geth.BlockTimeDelta = geth.CurrentBlock.Time() - lastBlock.Time()
-
-				if len(etherbaseWinStreaking) == 0 || etherbaseWinStreaking[0] != geth.CurrentBlock.Coinbase() {
-					etherbaseWinStreaking = []common.Address{geth.CurrentBlock.Coinbase()}
-				} else {
-					etherbaseWinStreaking = append(etherbaseWinStreaking, geth.CurrentBlock.Coinbase())
-				}
-
-			} else {
-				blockCountConsecutive = 0
-				etherbaseWinStreaking = []common.Address{}
-			}
-		}
-
-		calculateEtherbaseCounters(geth.CurrentBlock, lastBlock)
-
-		// Update the winning etherbase in the ttl map
-		etherbaseStr := geth.CurrentBlock.Coinbase().Hex()
-
-		// Increment etherbase win tallies
-		if it, ok := etherbaseCounts.Get(etherbaseStr); ok {
-			etherbaseCounts.SetDefault(etherbaseStr, it.(int)+1)
-		} else {
-			etherbaseCounts.SetDefault(etherbaseStr, 1)
-		}
-
-		its := etherbaseCounts.Items()
-		mu.Lock()
-		etherbaseBalanceM = make(map[string]*big.Int, len(its))
-		mu.Unlock()
-		for k := range its {
-			b, err := eth.BalanceAt(ctx, common.HexToAddress(k), geth.CurrentBlock.Number())
-			if err == nil {
-				mu.Lock()
-				etherbaseBalanceM[k] = b
-				mu.Unlock()
-			} else {
-				log.Println("error getting etherbase balance", err, etherbaseStr)
-			}
-		}
-	}
-
-	if watchingAddresses != "" {
-		for _, a := range strings.Split(watchingAddresses, ",") {
-			addr := common.HexToAddress(a)
-			balance, _ := eth.BalanceAt(ctx, addr, geth.CurrentBlock.Number())
-			nonce, _ := eth.NonceAt(ctx, addr, geth.CurrentBlock.Number())
-			address := Address{
-				Address: addr.String(),
-				Balance: balance,
-				Nonce:   nonce,
-			}
-			mu.Lock()
-			addresses[a] = address
-			mu.Unlock()
-		}
-	}
-
-}
-
-func Routine() {
-	var lastBlock *types.Block
-	ctx := context.Background()
-	for {
-		loop(ctx, lastBlock)
-		lastBlock = geth.CurrentBlock
-		time.Sleep(time.Duration(delay) * time.Millisecond)
 	}
 }
 
