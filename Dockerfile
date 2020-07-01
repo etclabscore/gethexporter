@@ -1,4 +1,4 @@
-FROM golang:1.11-alpine as base
+FROM golang:1.14-alpine as base
 RUN apk add --no-cache libstdc++ gcc g++ make git ca-certificates linux-headers
 MAINTAINER "Ted Fryer (https://github.com/devfdn)"
 WORKDIR /go/src/github.com/devfdn/gethexporter
