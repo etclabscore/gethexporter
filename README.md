@@ -1,4 +1,4 @@
-# Geth Server Prometheus Exporter
+o# Geth Server Prometheus Exporter
 Monitor your Ethereum Geth server with Prometheus and Grafana.
 
 <p align="center"><img width="90%" src="https://img.cjx.io/gethexporter-grafana.png"></p>
@@ -8,7 +8,7 @@ Run this Prometheus Exporter in a [Docker container](https://hub.docker.com/r/de
 ```bash
 docker run -it -d -p 9090:9090 \
   -e "GETH="http://mygethserverhere.com:8545" \
-  devfdn/gethexporter
+  etclabscore/gethexporter
 ```
 
 

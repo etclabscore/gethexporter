@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine as base
+FROM golang:1.21-alpine3.18 as base
 RUN apk add --no-cache libstdc++ gcc g++ make git ca-certificates linux-headers
 MAINTAINER "Meows D. Bits (https://github.com/meowsbits)"
 WORKDIR /go/src/github.com/etclabscore/gethexporter
